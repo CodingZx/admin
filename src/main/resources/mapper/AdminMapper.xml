@@ -7,6 +7,16 @@
 		id, user_name, real_name, password, create_time, status
 	</sql>
 
+
+	<insert id="add" parameterType="lol.cicco.admin.entity.AdminEntity">
+		insert into a_admin(id,user_name,password,real_name,create_time,status)
+		values (#{id},#{userName},#{password},#{realName},#{createTime},#{status})
+	</insert>
+
+	<select id="checkUserName" resultType="java.util.UUID">
+		select id from a_admin where user_name = #{userName} limit 1
+	</select>
+
 	<select id="findAdminList" resultType="lol.cicco.admin.entity.AdminEntity">
 		select <include refid="findColumns" /> from a_admin
 		<where>
@@ -30,4 +40,9 @@
 	<update id="updateStatus">
 		update a_admin set status = #{status} where id = #{id}
 	</update>
+
+	<delete id="remove">
+		delete from a_admin where id = #{id}
+	</delete>
+
 </mapper>

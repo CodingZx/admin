@@ -25,4 +25,9 @@ public class RouteController {
     public String adminList(){
         return "admin/admin-list";
     }
+
+    @GetMapping("/admin-add")
+    public String adminAdd(){
+        return "admin/admin-add";
+    }
 }

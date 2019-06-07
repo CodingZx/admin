@@ -19,10 +19,9 @@
 <body>
 <div class="x-nav">
           <span class="layui-breadcrumb">
-            <a href="">首页</a>
-            <a href="">演示</a>
+            <a href="#">账号管理</a>
             <a>
-              <cite>导航元素</cite></a>
+              <cite>管理员列表</cite></a>
           </span>
 </div>
 <div>
@@ -30,18 +29,21 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-body">
-                    <form class="layui-form layui-col-space5" id="form">
-
+                    <form class="layui-form layui-col-space5">
                         <div class="layui-inline layui-show-xs-block">
                             <input type="text" id="userName"  placeholder="请输入账号" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-show-xs-block">
-                            <button class="layui-btn" type="button" id="search"><i class="layui-icon">&#xe615;</i></button>
+                            <button class="layui-btn" type="button" id="search">搜索</button>
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn layui-btn-warm" type="button" id="clear">清空</button>
                         </div>
                     </form>
                 </div>
                 <div class="layui-card-header">
-                    <button class="layui-btn" onclick="xadmin.open('添加用户','./admin-add.html',600,400)"><i class="layui-icon"></i>添加</button>
+                    <button class="layui-btn" id="addBtn"><i class="layui-icon">&#xe654;</i>添加</button>
+                    <button class="layui-btn layui-btn-danger" id="batchRemoveBtn"><i class="layui-icon">&#xe640;</i>删除</button>
                 </div>
                 <div class="layui-card-body">
                     <table class="layui-form" id="table" lay-filter="table"></table>
@@ -52,24 +54,66 @@
 </div>
 </body>
 <script type="text/html" id="operate">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
     {{#  if(d.status+'' == 'true'){ }}
-    <span class="layui-btn layui-btn-warm layui-btn-mini" lay-event="disable">禁用</span>
+    <span class="layui-btn layui-btn-warm layui-btn-mini" lay-event="disable"><i class="layui-icon">&#x1006;</i>禁用</span>
     {{#  } else { }}
-    <span class="layui-btn layui-btn-normal layui-btn-mini" lay-event="active">启用</span>
+    <span class="layui-btn layui-btn-normal layui-btn-mini" lay-event="active"><i class="layui-icon">&#xe605;</i>启用</span>
     {{#  } }}
 </script>
 <script>
       layui.use(['laydate','laypage','table'], function(){
-        var laydate = layui.laydate;
         var table = layui.table;
+        var $ = layui.jquery
 
         var searchUserName = '';
-        $("#search").click(function(){
-            searchUserName = $("#userName").val();
-            reload();
-        });
+
+        $(document).on('click','#addBtn',function(){
+             xadmin.open('添加用户','/admin-add',600,400);
+        });
+
+        $(document).on('click','#batchRemoveBtn',function(){
+             var checkStatus = table.checkStatus('table');
+             var checkData = checkStatus.data;
+             var ids = '';
+             for(var i=0;i<checkData.length; i++){
+                ids += checkData[i].id;
+                if(i < checkData.length - 1){
+                    ids += ','
+                }
+             }
+             layer.confirm('确认要删除这些记录吗?', function(index){
+                ajax.delete("/admin/"+ids, {}, function (res, status) {
+                    if (res.code == 200) {
+                         layer.close(index);
+                         reload();
+                    } else {
+                        layer.msg(res.message);
+                    }
+                });
+
+            });
+
+
+        });
+
+        $(document).on('click','#search',function(){
+             var newSearchVal = $("#userName").val();
+             if(newSearchVal != searchUserName) {
+                searchUserName = newSearchVal;
+                reload();
+             }
+        });
+
+        $(document).on('click','#clear',function(){
+             $("#userName").val('');
+             var newSearchVal = $("#userName").val();
+             if(newSearchVal != searchUserName) {
+                searchUserName = newSearchVal;
+                reload();
+             }
+        });
 
         tableIns = table.render({
             elem: '#table'
@@ -98,7 +142,8 @@
             }
             ,cols: [
                     [
-                      {field:'id', title: 'ID' ,align:'center', hide:'true'}
+                      {type:'checkbox',width:'10%'}
+                      ,{field:'id', title: 'ID' ,align:'center', hide:'true'}
                       ,{field:'userName', title: '账号' ,align:'center'}
                       ,{field:'realName', title: '真实姓名',align:'center'}
                       ,{field:'createTime', title: '创建时间',align:'center'}
@@ -121,7 +166,6 @@
 
               if(layEvent === 'del'){ //删除
                 layer.confirm('确认要删除吗?', function(index){
-                    console.log(data.id);
                     ajax.delete("/admin/"+data.id, {}, function (res, status) {
                         if (res.code == 200) {
                              layer.close(index);
@@ -165,7 +209,7 @@
                 where:{userName:searchUserName}
             });
           }
-      });
+    });
     </script>
 
 </html>

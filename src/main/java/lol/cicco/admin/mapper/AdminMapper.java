@@ -10,9 +10,15 @@ import java.util.UUID;
 @Mapper
 public interface AdminMapper {
 
+    void add(AdminEntity adminEntity);
+
+    UUID checkUserName(@Param("userName")String userName);
+
     List<AdminEntity> findAdminList(@Param("size")int size,@Param("start") int start,@Param("userName")String userName);
 
     int findAdminCount(@Param("userName")String userName);
 
     void updateStatus(@Param("id") UUID id, @Param("status")boolean status);
+
+    void remove(@Param("id")UUID id);
 }
