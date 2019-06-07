@@ -96,4 +96,5 @@ fabric.properties
 
 .gitignore
 .idea/vcs.xml
-target/
+target
+src/test/
