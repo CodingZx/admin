@@ -70,7 +70,7 @@
         var searchUserName = '';
 
         $(document).on('click','#addBtn',function(){
-             xadmin.open('添加用户','/admin-add',600,400);
+             xadmin.open('添加用户','/admin/admin-add',600,400);
         });
 
         $(document).on('click','#batchRemoveBtn',function(){
@@ -82,6 +82,9 @@
                 if(i < checkData.length - 1){
                     ids += ','
                 }
+             }
+             if(ids == '') {
+                return;
              }
              layer.confirm('确认要删除这些记录吗?', function(index){
                 ajax.delete("/admin/"+ids, {}, function (res, status) {
@@ -123,7 +126,7 @@
             ,page: {
               layout: ['limit', 'prev', 'page', 'next','count', 'skip']
               //,curr: 5 //设定初始在第 5 页
-              ,groups: 1 //只显示 1 个连续页码
+              ,groups: 5 //只显示 1 个连续页码
               ,first: false //不显示首页
               ,last: false //不显示尾页
               ,limit: 20
@@ -177,7 +180,7 @@
 
                 });
               } else if(layEvent === 'edit'){ //编辑
-
+                    xadmin.open('添加用户','/admin/admin-edit?id='+data.id,600,400);
               } else if(layEvent === 'disable') { // 禁用
                     layer.confirm('确认要禁用吗？',function(index){
                         ajax.post("/admin/disable/"+data.id, {}, function (res, status) {
@@ -207,6 +210,9 @@
           function reload(){
             tableIns.reload({
                 where:{userName:searchUserName}
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
             });
           }
     });

@@ -12,11 +12,15 @@ public interface AdminMapper {
 
     void add(AdminEntity adminEntity);
 
+    void update(AdminEntity adminEntity);
+
     UUID checkUserName(@Param("userName")String userName);
 
     List<AdminEntity> findAdminList(@Param("size")int size,@Param("start") int start,@Param("userName")String userName);
 
     int findAdminCount(@Param("userName")String userName);
+
+    AdminEntity findOne(@Param("id")UUID id);
 
     void updateStatus(@Param("id") UUID id, @Param("status")boolean status);
 

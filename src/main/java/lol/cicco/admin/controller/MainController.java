@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class RouteController {
+public class MainController {
 
     @GetMapping({"/", "/login"})
     public String login(){
@@ -21,13 +21,5 @@ public class RouteController {
         return "welcome";
     }
 
-    @GetMapping("/admin-list")
-    public String adminList(){
-        return "admin/admin-list";
-    }
 
-    @GetMapping("/admin-add")
-    public String adminAdd(){
-        return "admin/admin-add";
-    }
 }

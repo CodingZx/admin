@@ -24,6 +24,14 @@ public class AdminService {
     @Autowired
     private AdminMapper adminMapper;
 
+    public AdminResponse findById(UUID id){
+        AdminEntity entity = adminMapper.findOne(id);
+        if(entity == null) {
+            return null;
+        }
+        return new AdminResponse(entity);
+    }
+
     public R list(Page page, String userName){
         var list = adminMapper.findAdminList(page.getSize(),page.getStart(), SQLUtils.fuzzyAll(userName));
         var count = adminMapper.findAdminCount(SQLUtils.fuzzyAll(userName));
@@ -32,11 +40,12 @@ public class AdminService {
     }
 
     public R save(AdminRequest admin){
-        if(admin.getId() == null) {
-            UUID checkId = adminMapper.checkUserName(admin.getUserName().trim());
-            if(checkId != null){
-                return R.other("用户名重复!");
-            }
+        UUID checkId = adminMapper.checkUserName(admin.getUserName().trim());
+        if(admin.getId() == null && checkId != null){
+            return R.other("用户名重复!");
+        }
+        if(admin.getId() != null && checkId != null && !checkId.equals(admin.getId())){
+            return R.other("用户名重复!");
         }
 
         AdminEntity entity = new AdminEntity();
@@ -45,6 +54,8 @@ public class AdminService {
         entity.setCreateTime(LocalDateTime.now());
         if(!Strings.isNullOrEmpty(admin.getPassword().trim())){
             entity.setPassword(PasswordUtils.generate(admin.getPassword().trim()));
+        } else {
+            entity.setPassword(null);
         }
         entity.setRealName(admin.getRealName().trim());
         entity.setStatus(true);
@@ -53,7 +64,7 @@ public class AdminService {
             entity.setId(UUID.randomUUID());
             adminMapper.add(entity);
         } else {
-
+            adminMapper.update(entity);
         }
 
         return R.ok();
