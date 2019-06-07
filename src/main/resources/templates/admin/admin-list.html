@@ -1,167 +1,171 @@
 <!DOCTYPE html>
 <html class="x-admin-sm">
-    <head>
-        <meta charset="UTF-8">
-        <title>管理员列表</title>
-        <meta name="renderer" content="webkit">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
-        <link rel="stylesheet" href="/css/font.css">
-        <link rel="stylesheet" href="/css/xadmin.css">
-        <script src="/layui/layui.js" charset="utf-8"></script>
-        <script type="text/javascript" src="/js/xadmin.js"></script>
-    </head>
-    <body>
-        <div class="layui-fluid">
-            <div class="layui-row layui-col-space15">
-                <div class="layui-col-md12">
-                    <div class="layui-card">
-                        <div class="layui-card-body ">
-                            <form class="layui-form layui-col-space5">
-                                <div class="layui-inline layui-show-xs-block">
-                                    <input class="layui-input"  autocomplete="off" placeholder="开始日" name="start" id="start">
-                                </div>
-                                <div class="layui-inline layui-show-xs-block">
-                                    <input class="layui-input"  autocomplete="off" placeholder="截止日" name="end" id="end">
-                                </div>
-                                <div class="layui-inline layui-show-xs-block">
-                                    <input type="text" name="username"  placeholder="请输入用户名" autocomplete="off" class="layui-input">
-                                </div>
-                                <div class="layui-inline layui-show-xs-block">
-                                    <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="layui-card-header">
-                            <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-                            <button class="layui-btn" onclick="xadmin.open('添加用户','./admin-add.html',600,400)"><i class="layui-icon"></i>添加</button>
-                        </div>
-                        <div class="layui-card-body ">
-                            <table class="layui-table layui-form">
-                              <thead>
-                                <tr>
-                                  <th>
-                                    <input type="checkbox" name=""  lay-skin="primary">
-                                  </th>
-                                  <th>ID</th>
-                                  <th>登录名</th>
-                                  <th>手机</th>
-                                  <th>邮箱</th>
-                                  <th>角色</th>
-                                  <th>加入时间</th>
-                                  <th>状态</th>
-                                  <th>操作</th>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td>
-                                    <input type="checkbox" name=""  lay-skin="primary">
-                                  </td>
-                                  <td>1</td>
-                                  <td>admin</td>
-                                  <td>18925139194</td>
-                                  <td>113664000@qq.com</td>
-                                  <td>超级管理员</td>
-                                  <td>2017-01-01 11:11:42</td>
-                                  <td class="td-status">
-                                    <span class="layui-btn layui-btn-normal layui-btn-mini">已启用</span></td>
-                                  <td class="td-manage">
-                                    <a onclick="member_stop(this,'10001')" href="javascript:;"  title="启用">
-                                      <i class="layui-icon">&#xe601;</i>
-                                    </a>
-                                    <a title="编辑"  onclick="xadmin.open('编辑','admin-edit.html')" href="javascript:;">
-                                      <i class="layui-icon">&#xe642;</i>
-                                    </a>
-                                    <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
-                                      <i class="layui-icon">&#xe640;</i>
-                                    </a>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                        </div>
-                        <div class="layui-card-body" id="page" >
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.2</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <script src="/js/jquery.min.js" charset="utf-8"></script>
+    <script src="/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <script type="text/javascript" src="/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/js/jquery.form.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/js/ajax.js"></script>
+</head>
+<body>
+<div class="x-nav">
+          <span class="layui-breadcrumb">
+            <a href="">首页</a>
+            <a href="">演示</a>
+            <a>
+              <cite>导航元素</cite></a>
+          </span>
+</div>
+<div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form class="layui-form layui-col-space5" id="form">
 
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" id="userName"  placeholder="请输入账号" autocomplete="off" class="layui-input">
                         </div>
-                    </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn" type="button" id="search"><i class="layui-icon">&#xe615;</i></button>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-header">
+                    <button class="layui-btn" onclick="xadmin.open('添加用户','./admin-add.html',600,400)"><i class="layui-icon"></i>添加</button>
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-form" id="table" lay-filter="table"></table>
                 </div>
             </div>
-        </div> 
-    </body>
-    <script>
-        layui.use(['laydate', 'laypage', 'form'], function () {
-            var laydate = layui.laydate;
-            var laypage = layui.laypage;
-            var form = layui.form;
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/html" id="operate">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{#  if(d.status+'' == 'true'){ }}
+    <span class="layui-btn layui-btn-warm layui-btn-mini" lay-event="disable">禁用</span>
+    {{#  } else { }}
+    <span class="layui-btn layui-btn-normal layui-btn-mini" lay-event="active">启用</span>
+    {{#  } }}
+</script>
+<script>
+      layui.use(['laydate','laypage','table'], function(){
+        var laydate = layui.laydate;
+        var table = layui.table;
 
-            //执行一个laydate实例
-            laydate.render({
-                elem: '#start' //指定元素
-            });
-
-            //执行一个laydate实例
-            laydate.render({
-                elem: '#end' //指定元素
-            });
-
-            //完整功能
-            laypage.render({
-                elem: 'page'
-                , limit: 20
-                , count: 100
-                , layout: ['prev', 'page', 'next']
-                , jump: function (obj) {
-                    console.log(obj)
-                }
-            });
+        var searchUserName = '';
+        $("#search").click(function(){
+            searchUserName = $("#userName").val();
+            reload();
         });
 
-       /*用户-停用*/
-      function member_stop(obj,id){
-          layer.confirm('确认要停用吗？',function(index){
+        tableIns = table.render({
+            elem: '#table'
+            ,height: 'full-190'
+            ,url:'/admin/list'
+            ,where:{userName:searchUserName}
+            ,page: {
+              layout: ['limit', 'prev', 'page', 'next','count', 'skip']
+              //,curr: 5 //设定初始在第 5 页
+              ,groups: 1 //只显示 1 个连续页码
+              ,first: false //不显示首页
+              ,last: false //不显示尾页
+              ,limit: 20
+            }
+            ,loading: true
+            ,request: {
+                pageName: 'page' //页码的参数名称，默认：page
+                ,limitName: 'size' //每页数据量的参数名，默认：limit
+            }
+            ,response: {
+                statusName: 'code' //规定数据状态的字段名称，默认：code
+                ,statusCode: 200 //规定成功的状态码，默认：0
+                ,msgName: 'message' //规定状态信息的字段名称，默认：msg
+                ,countName: 'count' //规定数据总数的字段名称，默认：count
+                ,dataName: 'data' //规定数据列表的字段名称，默认：data
+            }
+            ,cols: [
+                    [
+                      {field:'id', title: 'ID' ,align:'center', hide:'true'}
+                      ,{field:'userName', title: '账号' ,align:'center'}
+                      ,{field:'realName', title: '真实姓名',align:'center'}
+                      ,{field:'createTime', title: '创建时间',align:'center'}
+                      ,{field:'status',align:'center', title: '状态',templet: function(d){
+                        if(d.status+'' == 'true'){
+                            return '<span class="layui-btn layui-btn-normal layui-btn-mini">已启用</span>';
+                        }else {
+                            return '<span class="layui-btn layui-btn-warm layui-btn-mini">已禁用</span>';
+                        }
+                      }}
+                      ,{title: '操作',toolbar: '#operate',align:'center'}
+                    ]
+            ]
+          });
 
-              if($(obj).attr('title')=='启用'){
+          table.on('tool(table)', function(obj){
+              var data = obj.data; //获得当前行数据
+              var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+              var tr = obj.tr; //获得当前行 tr 的DOM对象
 
-                //发异步把用户状态进行更改
-                $(obj).attr('title','停用')
-                $(obj).find('i').html('&#xe62f;');
+              if(layEvent === 'del'){ //删除
+                layer.confirm('确认要删除吗?', function(index){
+                    console.log(data.id);
+                    ajax.delete("/admin/"+data.id, {}, function (res, status) {
+                        if (res.code == 200) {
+                             layer.close(index);
+                             reload();
+                        } else {
+                            layer.msg(res.message);
+                        }
+                    });
 
-                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
-                layer.msg('已停用!',{icon: 5,time:1000});
+                });
+              } else if(layEvent === 'edit'){ //编辑
 
-              }else{
-                $(obj).attr('title','启用')
-                $(obj).find('i').html('&#xe601;');
+              } else if(layEvent === 'disable') { // 禁用
+                    layer.confirm('确认要禁用吗？',function(index){
+                        ajax.post("/admin/disable/"+data.id, {}, function (res, status) {
+                            if (res.code == 200) {
+                                 layer.close(index);
+                                 reload();
+                            } else {
+                                layer.msg(res.message);
+                            }
+                        });
+                    });
+              } else if(layEvent === 'active'){
+                    layer.confirm('确认要禁用吗？',function(index){
+                        ajax.post("/admin/active/"+data.id, {}, function (res, status) {
+                            if (res.code == 200) {
+                                 layer.close(index);
+                                 reload();
+                            } else {
+                                layer.msg(res.message);
+                            }
+                        });
+                    });
 
-                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
-                layer.msg('已启用!',{icon: 5,time:1000});
               }
-              
           });
-      }
 
-      /*用户-删除*/
-      function member_del(obj,id){
-          layer.confirm('确认要删除吗？',function(index){
-              //发异步删除数据
-              $(obj).parents("tr").remove();
-              layer.msg('已删除!',{icon:1,time:1000});
-          });
-      }
-
-
-
-      function delAll (argument) {
-
-        var data = tableCheck.getData();
-  
-        layer.confirm('确认要删除吗？'+data,function(index){
-            //捉到所有被选中的，发异步进行删除
-            layer.msg('删除成功', {icon: 1});
-            $(".layui-form-checked").not('.header').parents('tr').remove();
-        });
-      }
-
+          function reload(){
+            tableIns.reload({
+                where:{userName:searchUserName}
+            });
+          }
+      });
     </script>
 
 </html>
