@@ -6,12 +6,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-public class AdminEntity {
+public class RoleEntity {
     private UUID id;
-    private String userName;
-    private String realName;
-    private String password;
+    private String roleName;
     private LocalDateTime createTime;
-    private boolean status;
-    private UUID roleId;
 }

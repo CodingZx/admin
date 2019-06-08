@@ -25,4 +25,6 @@ public interface AdminMapper {
     void updateStatus(@Param("id") UUID id, @Param("status")boolean status);
 
     void remove(@Param("id")UUID id);
+
+    AdminEntity checkRole(@Param("roleId")UUID roleId);
 }

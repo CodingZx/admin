@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<html class="x-admin-sm">
     
     <head>
         <meta charset="UTF-8">
-        <title>新增账号</title>
+        <title>新增角色</title>
         <meta name="renderer" content="webkit">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
@@ -22,53 +22,17 @@
             <div class="layui-row">
                 <form class="layui-form" id="myForm">
                   <div class="layui-form-item">
-                      <label for="userName" class="layui-form-label">
+                      <label for="roleName" class="layui-form-label">
                           <span class="x-red">*</span>账号
                       </label>
                       <div class="layui-input-inline">
-                          <input type="text" id="userName" name="userName" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                          <input type="text" id="roleName" name="roleName" required="" lay-verify="required" autocomplete="off" class="layui-input">
                       </div>
                       <div class="layui-form-mid layui-word-aux">
-                          <span class="x-red">*</span>将会成为您唯一的登入名
-                      </div>
-                  </div>
-                    <div class="layui-form-item">
-                        <label for="realName" class="layui-form-label">
-                            <span class="x-red">*</span>真实姓名
-                        </label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="realName" name="realName" required="" lay-verify="required" autocomplete="off" class="layui-input">
-                        </div>
-                        <div class="layui-form-mid layui-word-aux">
 
-                        </div>
-                    </div>
-
-                  <div class="layui-form-item">
-                      <label for="password" class="layui-form-label">
-                          <span class="x-red">*</span>密码
-                      </label>
-                      <div class="layui-input-inline">
-                          <input type="password" id="password" name="password" required="" lay-verify="password"
-                          autocomplete="off" class="layui-input">
-                      </div>
-                      <div class="layui-form-mid layui-word-aux">
-                            密码不能少于3位
                       </div>
                   </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label"><span class="x-red">*</span>角色</label>
-                        <div class="layui-input-inline">
-                            <select name="roleId" lay-verify="required">
-                                <option value=""> -- 请选择 -- </option>
-                                <option th:each="val:${roleList}" th:value="${val.id}" th:text="${val.name}"></option>
-                            </select>
-                        </div>
-                        <div class="layui-form-mid layui-word-aux">
-
-                        </div>
-                    </div>
                   <div class="layui-form-item">
                       <label class="layui-form-label">
                       </label>
@@ -94,17 +58,13 @@
 
                 //自定义验证规则
                 form.verify({
-                    password: function(value) {
-                        if (value.length < 3) {
-                            return '密码不能少于3位';
-                        }
-                    }
+
                 });
 
                 //监听提交
                 form.on('submit(add)', function(data) {
                     var options = {
-                        url: '/admin/add',
+                        url: '/role/add',
                         type: 'POST',
                         success: function (data) {
                             if (data.code == 200) {

@@ -60,10 +60,13 @@
 
                 <div class="layui-form-item">
                     <label class="layui-form-label"><span class="x-red">*</span>角色</label>
-                    <div class="layui-input-block">
-                        <input type="checkbox" name="like1[write]" lay-skin="primary" title="超级管理员" >
-                        <input type="checkbox" name="like1[read]" lay-skin="primary" title="编辑人员">
-                        <input type="checkbox" name="like1[write]" lay-skin="primary" title="宣传人员" >
+                    <div class="layui-input-inline">
+                        <select name="roleId" lay-verify="required">
+                            <option th:select="${admin.roleId eq val.id}" th:each="val:${roleList}" th:value="${val.id}" th:text="${val.name}"></option>
+                        </select>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+
                     </div>
                 </div>
                 <div class="layui-form-item">

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="lol.cicco.admin.mapper.RoleMapper">
+
+	<sql id="findColumns">
+		id, role_name, create_time
+	</sql>
+
+	<insert id="addRole" parameterType="lol.cicco.admin.entity.RoleEntity">
+		insert into a_role(id,role_name,create_time)
+		values(#{id},#{roleName},#{createTime})
+	</insert>
+
+	<update id="updateRole" parameterType="lol.cicco.admin.entity.RoleEntity">
+		update a_role
+		<set>
+			role_name = #{roleName}
+		</set>
+		where id = #{id}
+	</update>
+
+	<select id="findAll" resultType="lol.cicco.admin.entity.RoleEntity">
+		select <include refid="findColumns" /> from a_role
+	</select>
+
+	<select id="findList" resultType="lol.cicco.admin.entity.RoleEntity">
+		select <include refid="findColumns" />
+		from a_role
+		<where>
+			<if test="roleName != null">
+				role_name like #{roleName}
+			</if>
+		</where>
+		order by create_time desc
+		limit #{size} offset #{start}
+	</select>
+
+	<select id="findCount" resultType="int">
+		select count(1) from a_role
+		<where>
+			<if test="roleName != null">
+				role_name like #{roleName}
+			</if>
+		</where>
+	</select>
+
+	<select id="findById" resultType="lol.cicco.admin.entity.RoleEntity">
+		select <include refid="findColumns" />
+		from a_role
+		where id = #{id} limit 1
+	</select>
+
+	<delete id="remove">
+		delete from a_role where id = #{id}
+	</delete>
+</mapper>

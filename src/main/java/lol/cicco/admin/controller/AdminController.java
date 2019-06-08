@@ -8,6 +8,7 @@ import lol.cicco.admin.common.model.R;
 import lol.cicco.admin.dto.request.AdminRequest;
 import lol.cicco.admin.dto.response.AdminResponse;
 import lol.cicco.admin.service.AdminService;
+import lol.cicco.admin.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +21,8 @@ import java.util.UUID;
 @RequestMapping("/admin")
 @Controller
 public class AdminController {
-
+    @Autowired
+    private RoleService roleService;
     @Autowired
     private AdminService adminService;
 
@@ -30,7 +32,8 @@ public class AdminController {
     }
 
     @GetMapping("/admin-add")
-    public String adminAdd(){
+    public String adminAdd(Model model){
+        model.addAttribute("roleList", roleService.all());
         return "admin/admin-add";
     }
 
@@ -40,6 +43,7 @@ public class AdminController {
         if(response == null) {
             return Constants.NOT_FOUND_PAGE;
         }
+        model.addAttribute("roleList", roleService.all());
         model.addAttribute("admin", response);
         return "admin/admin-edit";
     }
@@ -82,18 +86,27 @@ public class AdminController {
                 return R.other("密码不能少于3位");
             }
         }
+        if(admin.getId().equals(Constants.DEFAULT_ID)){
+            return R.other("无法对最高管理员进行操作!");
+        }
         return adminService.save(admin);
     }
 
     @ResponseBody
     @PostMapping("/disable/{id}")
     public R disable(@PathVariable("id")UUID id){
+        if(id.equals(Constants.DEFAULT_ID)){
+            return R.other("无法对最高管理员进行操作!");
+        }
         return adminService.updateStatus(id, false);
     }
 
     @ResponseBody
     @PostMapping("/active/{id}")
     public R active(@PathVariable("id")UUID id){
+        if(id.equals(Constants.DEFAULT_ID)){
+            return R.other("无法对最高管理员进行操作!");
+        }
         return adminService.updateStatus(id, true);
     }
 
@@ -103,7 +116,12 @@ public class AdminController {
         List<UUID> uuids = Lists.newLinkedList();
         for(String id : ids.split(",")){
             try{
-                uuids.add(UUID.fromString(id));
+                UUID fromId = UUID.fromString(id);
+
+                if(fromId.equals(Constants.DEFAULT_ID)){
+                    return R.other("无法删除最高管理员!");
+                }
+                uuids.add(fromId);
             } catch (Exception ignored){}
         }
 

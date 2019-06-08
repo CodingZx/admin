@@ -8,7 +8,9 @@ import lol.cicco.admin.common.util.SQLUtils;
 import lol.cicco.admin.dto.request.AdminRequest;
 import lol.cicco.admin.dto.response.AdminResponse;
 import lol.cicco.admin.entity.AdminEntity;
+import lol.cicco.admin.entity.RoleEntity;
 import lol.cicco.admin.mapper.AdminMapper;
+import lol.cicco.admin.mapper.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,19 +26,23 @@ public class AdminService {
     @Autowired
     private AdminMapper adminMapper;
 
+    @Autowired
+    private RoleMapper roleMapper;
+
     public AdminResponse findById(UUID id){
         AdminEntity entity = adminMapper.findOne(id);
         if(entity == null) {
             return null;
         }
-        return new AdminResponse(entity);
+        RoleEntity role = roleMapper.findById(entity.getRoleId());
+        return new AdminResponse(entity, role);
     }
 
     public R list(Page page, String userName){
         var list = adminMapper.findAdminList(page.getSize(),page.getStart(), SQLUtils.fuzzyAll(userName));
         var count = adminMapper.findAdminCount(SQLUtils.fuzzyAll(userName));
 
-        return R.ok(list.stream().map(AdminResponse::new).collect(Collectors.toList()), count);
+        return R.ok(list.stream().map(r -> new AdminResponse(r, roleMapper.findById(r.getRoleId()))).collect(Collectors.toList()), count);
     }
 
     public R save(AdminRequest admin){
@@ -59,6 +65,7 @@ public class AdminService {
         }
         entity.setRealName(admin.getRealName().trim());
         entity.setStatus(true);
+        entity.setRoleId(admin.getRoleId());
 
         if(entity.getId() == null) {
             entity.setId(UUID.randomUUID());
@@ -71,6 +78,7 @@ public class AdminService {
     }
 
     public R updateStatus(UUID adminId, boolean status){
+
         adminMapper.updateStatus(adminId, status);
         return R.ok();
     }
