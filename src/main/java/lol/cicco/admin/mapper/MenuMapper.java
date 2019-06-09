@@ -18,6 +18,8 @@ public interface MenuMapper {
 
     MenuEntity findById(@Param("id") UUID id);
 
+    List<MenuEntity> findByIds(@Param("ids")List<UUID> ids);
+
     void removeById(@Param("id")UUID id);
 
     List<MenuEntity> findByParentId(@Param("id")UUID id);

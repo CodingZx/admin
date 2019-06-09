@@ -43,9 +43,9 @@ public class RoleService {
         return roleMapper.findAll().stream().map(r -> new Select(r.getId(), r.getRoleName())).collect(Collectors.toList());
     }
 
-    public RoleResponse findById(UUID roleId){
+    public RoleResponse findById(UUID roleId) {
         RoleEntity role = roleMapper.findById(roleId);
-        if(role == null) {
+        if (role == null) {
             return null;
         }
         return new RoleResponse(role);
@@ -77,55 +77,60 @@ public class RoleService {
         return R.ok();
     }
 
-    public R remove(List<UUID> ids){
+    public R remove(List<UUID> ids) {
         List<String> resultList = Lists.newLinkedList();
-        for (UUID id : ids){
+        for (UUID id : ids) {
             AdminEntity admin = adminMapper.checkRole(id);
-            if(admin != null) { // 角色正在被使用
+            if (admin != null) { // 角色正在被使用
                 RoleEntity role = roleMapper.findById(id);
                 resultList.add(role.getRoleName());
             } else {
                 roleMapper.remove(id);
             }
         }
-        if(!resultList.isEmpty()){
-            throw new AlreadyUseException(Joiner.on(",").join(resultList) +" 已被使用!");
+        if (!resultList.isEmpty()) {
+            throw new AlreadyUseException(Joiner.on(",").join(resultList) + " 已被使用!");
         }
         return R.ok();
     }
 
-    public R menus(UUID roleId){
+    public R menus(UUID roleId) {
         List<UUID> roleMenus = Lists.newLinkedList();
-        if(roleId != null) {
+        if (roleId != null) {
             RoleEntity role = roleMapper.findById(roleId);
-            if(role == null) {
+            if (role == null) {
                 return R.other("非法请求");
             }
-            roleMenus.addAll(Streams.stream(role.getMenus().getAsJsonArray("menus")).map(r->UUID.fromString(r.getAsString())).collect(Collectors.toList()));
+            roleMenus.addAll(Streams.stream(role.getMenus().getAsJsonArray("menus")).map(r -> UUID.fromString(r.getAsString())).collect(Collectors.toList()));
         }
         List<MenuEntity> list = menuMapper.findList();
 
         // 第一层目录
         var dicList = list.stream()
                 .filter(r -> r.getParentId() == null)
-                .map(r-> new MenuTreeResponse(r, roleMenus.contains(r.getId()), false))
+                .map(r -> new MenuTreeResponse(r, false, false))
                 .collect(Collectors.toList());
         dicList.forEach(dic -> {
             // 第二层链接
-            dic.setChildren(list.stream().filter(m -> dic.getId().equals(m.getParentId())).map(r -> new MenuTreeResponse(r, roleMenus.contains(r.getId()),false)).collect(Collectors.toList()));
+            dic.setChildren(list.stream().filter(m -> dic.getId().equals(m.getParentId())).map(r -> new MenuTreeResponse(r, false, false)).collect(Collectors.toList()));
 
             dic.getChildren().forEach(c -> {
                 // 第三层按钮
-                c.setChildren(list.stream().filter(m -> c.getId().equals(m.getParentId())).map(r -> new MenuTreeResponse(r, roleMenus.contains(r.getId()),true)).collect(Collectors.toList()));
+                c.setChildren(list.stream().filter(m -> c.getId().equals(m.getParentId())).map(r -> new MenuTreeResponse(r, roleMenus.contains(r.getId()), true)).collect(Collectors.toList()));
+
+                if(c.getChildren().stream().filter(MenuTreeResponse::isChecked).count() == c.getChildren().size()) {
+                    c.setChecked(true);
+                }
             });
+
         });
 
         return R.ok(dicList);
     }
 
-    public List<MenuTreeResponse> menuTree(Token token){
+    public List<MenuTreeResponse> menuTree(Token token) {
         RoleEntity role = roleMapper.findById(token.getRoleId());
-        var roleMenus = Streams.stream(role.getMenus().getAsJsonArray("menus")).map(r->UUID.fromString(r.getAsString())).collect(Collectors.toList());
+        var roleMenus = Streams.stream(role.getMenus().getAsJsonArray("menus")).map(r -> UUID.fromString(r.getAsString())).collect(Collectors.toList());
 
         List<MenuEntity> list = menuMapper.findList();
         // 第一层目录
@@ -138,5 +143,28 @@ public class RoleService {
             dic.setChildren(list.stream().filter(m -> dic.getId().equals(m.getParentId()) && roleMenus.contains(m.getId())).map(MenuTreeResponse::new).collect(Collectors.toList()));
         });
         return dicList;
+    }
+
+    public boolean hasPermission(Token token, List<String> permissions) {
+        var role = roleMapper.findById(token.getRoleId());
+        var menuArr = role.getMenus().getAsJsonArray("menus");
+
+        List<UUID> roleMenus = Lists.newLinkedList();
+        for (int i = 0; i < menuArr.size(); i++) {
+            var menuId = UUID.fromString(menuArr.get(i).getAsString());
+            roleMenus.add(menuId);
+        }
+
+        if (roleMenus.isEmpty()) {
+            return false;
+        }
+        var menus = menuMapper.findByIds(roleMenus);
+
+        for(var menu : menus){
+            if(permissions.contains(menu.getPermission())){
+                return true;
+            }
+        }
+        return false;
     }
 }

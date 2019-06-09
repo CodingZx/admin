@@ -10,7 +10,11 @@ public class Constants {
     /**
      * 404页面
      */
-    public static final String NOT_FOUND_PAGE = "404";
+    public static final String NOT_FOUND_PAGE = "/404";
+    /**
+     * 登录页面
+     */
+    public static final String LOGIN_PAGE = "/";
 
 
     public static class RSA {

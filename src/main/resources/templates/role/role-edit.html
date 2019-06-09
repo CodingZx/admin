@@ -115,7 +115,7 @@
                 //监听提交
                 form.on('submit(add)', function(data) {
                     var checked = el.getChecked(false, true);
-                    console.log(checked);
+                    //console.log(checked);
                     var menus = "";
                     for(var i=0;i<checked.length;i++){
                         menus += checked[i].id;
@@ -125,10 +125,10 @@
                     }
                     $("#menuVal").val(menus);
 
-                    console.log($("#menuVal").val());
+                    //console.log($("#menuVal").val());
                     if(menus == '') {
-                        layer.msg("请选择菜单!", {time: 5000});
-                        return;
+                        layer.msg("请选择菜单!", {time: 3000});
+                        return false;
                     }
                     var options = {
                         url: '/role/edit',

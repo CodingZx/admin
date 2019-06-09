@@ -2,27 +2,22 @@ package lol.cicco.admin.common.interceptor;
 
 import lol.cicco.admin.common.Constants;
 import lol.cicco.admin.common.annotation.NoLogin;
-import lol.cicco.admin.common.model.R;
 import lol.cicco.admin.common.model.Token;
 import lol.cicco.admin.common.util.GsonUtils;
 import lol.cicco.admin.common.util.RSAUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
-public class LoginInterceptor implements HandlerInterceptor {
+public class LoginInterceptor extends BaseInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -68,28 +63,5 @@ public class LoginInterceptor implements HandlerInterceptor {
         return true;
     }
 
-    private void sendLoginError(HttpServletResponse response, HandlerMethod method) throws IOException {
-        if(method.getMethod().getAnnotation(ResponseBody.class) != null) {
-            // json
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(GsonUtils.gson().toJson(R.login()));
-            response.flushBuffer();
 
-            return;
-        }
-
-        if(method.getMethod().getDeclaringClass().getAnnotation(RestController.class) != null) {
-            // json
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(GsonUtils.gson().toJson(R.login()));
-            response.flushBuffer();
-
-            return;
-        }
-
-
-        // view
-        response.sendRedirect("/");
-        response.flushBuffer();
-    }
 }

@@ -30,6 +30,15 @@
 		from a_menu
 	</select>
 
+	<select id="findByIds" resultType="lol.cicco.admin.entity.MenuEntity">
+		select <include refid="findColumns" />
+		from a_menu
+		where id in
+		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
 	<select id="findById" resultType="lol.cicco.admin.entity.MenuEntity">
 		select <include refid="findColumns" />
 		from a_menu where id = #{id} limit 1

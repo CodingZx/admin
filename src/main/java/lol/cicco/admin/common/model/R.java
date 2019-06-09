@@ -9,6 +9,8 @@ public class R {
     public static final int ERROR = 500;
     // 提示状态码
     public static final int OTHER = 400;
+    // 无权限
+    public static final int NO_PERMISSION = 404;
     // 登录状态码
     public static final int LOGIN = 999;
     // 正常状态码
@@ -61,6 +63,10 @@ public class R {
 
     public static R login() {
         return new R(LOGIN, "用户信息已失效,请重新登录!");
+    }
+
+    public static R noPermission(){
+        return new R(NO_PERMISSION, "无权限");
     }
 
 }

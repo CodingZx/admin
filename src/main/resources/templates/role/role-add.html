@@ -126,7 +126,7 @@
                     console.log($("#menuVal").val());
                     if(menus == '') {
                         layer.msg("请选择菜单!", {time: 5000});
-                        return;
+                        return false;
                     }
                     var options = {
                         url: '/role/add',
