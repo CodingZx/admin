@@ -49,6 +49,7 @@ public class MainController {
         Token token = (Token)request.getAttribute(Constants.ADMIN_USER_TOKEN);
         var menus = roleService.menuTree(token);
         model.addAttribute("menus", menus);
+        model.addAttribute("adminName", token.getRealName());
         return "main";
     }
 
