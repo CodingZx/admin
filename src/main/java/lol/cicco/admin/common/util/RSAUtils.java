@@ -55,6 +55,7 @@ public class RSAUtils {
 			}
 			return sb.toString();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return "";
 		}
 	}

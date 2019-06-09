@@ -46,11 +46,11 @@ public class AdminService {
     }
 
     public R save(AdminRequest admin){
-        UUID checkId = adminMapper.checkUserName(admin.getUserName().trim());
-        if(admin.getId() == null && checkId != null){
+        AdminEntity check = adminMapper.findByUserName(admin.getUserName().trim());
+        if(admin.getId() == null && check != null){
             return R.other("用户名重复!");
         }
-        if(admin.getId() != null && checkId != null && !checkId.equals(admin.getId())){
+        if(admin.getId() != null && check != null && !check.getId().equals(admin.getId())){
             return R.other("用户名重复!");
         }
 

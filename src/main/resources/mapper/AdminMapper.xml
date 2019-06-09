@@ -26,8 +26,8 @@
 		where id = #{id}
 	</update>
 
-	<select id="checkUserName" resultType="java.util.UUID">
-		select id from a_admin where user_name = #{userName} limit 1
+	<select id="findByUserName" resultType="lol.cicco.admin.entity.AdminEntity">
+		select <include refid="findColumns" /> from a_admin where user_name = #{userName} limit 1
 	</select>
 
 	<select id="findOne" resultType="lol.cicco.admin.entity.AdminEntity">

@@ -14,7 +14,7 @@ public interface AdminMapper {
 
     void update(AdminEntity adminEntity);
 
-    UUID checkUserName(@Param("userName")String userName);
+    AdminEntity findByUserName(@Param("userName")String userName);
 
     List<AdminEntity> findAdminList(@Param("size")int size,@Param("start") int start,@Param("userName")String userName);
 
