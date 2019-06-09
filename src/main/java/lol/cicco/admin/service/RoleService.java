@@ -109,21 +109,24 @@ public class RoleService {
         // 第一层目录
         var dicList = list.stream()
                 .filter(r -> r.getParentId() == null)
-                .map(r -> new MenuTreeResponse(r, false, false))
+                .map(r -> new MenuTreeResponse(r, roleMenus.contains(r.getId()), false))
                 .collect(Collectors.toList());
         dicList.forEach(dic -> {
             // 第二层链接
-            dic.setChildren(list.stream().filter(m -> dic.getId().equals(m.getParentId())).map(r -> new MenuTreeResponse(r, false, false)).collect(Collectors.toList()));
+            dic.setChildren(list.stream().filter(m -> dic.getId().equals(m.getParentId())).map(r -> new MenuTreeResponse(r, roleMenus.contains(r.getId()), false)).collect(Collectors.toList()));
 
             dic.getChildren().forEach(c -> {
                 // 第三层按钮
                 c.setChildren(list.stream().filter(m -> c.getId().equals(m.getParentId())).map(r -> new MenuTreeResponse(r, roleMenus.contains(r.getId()), true)).collect(Collectors.toList()));
 
-                if(c.getChildren().stream().filter(MenuTreeResponse::isChecked).count() == c.getChildren().size()) {
+                if(c.getChildren().size() > 0){
                     c.setChecked(true);
                 }
             });
 
+            if(dic.getChildren().size() > 0){
+                dic.setChecked(true);
+            }
         });
 
         return R.ok(dicList);
