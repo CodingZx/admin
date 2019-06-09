@@ -75,7 +75,11 @@ layui.define(['layer', 'table'], function (exports) {
                     iconHtml += '<span class="treeTable-empty"></span>';
                 }
                 if (isDir) {
-                    iconHtml += '<i class="layui-icon layui-icon-triangle-d"></i> <i class="layui-icon layui-icon-layer"></i>';
+                    if(d.icon && d.icon != '') {
+                        iconHtml += '<i class="layui-icon layui-icon-triangle-d"></i> <i class="layui-icon">'+d.icon+'</i>';
+                    } else {
+                        iconHtml += '<i class="layui-icon layui-icon-triangle-d"></i> <i class="layui-icon">&#xe66e;</i>';
+                    }
                 } else {
                     iconHtml += '<i class="layui-icon layui-icon-file"></i>';
                 }

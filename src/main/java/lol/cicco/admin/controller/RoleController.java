@@ -2,6 +2,7 @@ package lol.cicco.admin.controller;
 
 import com.google.common.collect.Lists;
 import lol.cicco.admin.common.Constants;
+import lol.cicco.admin.common.annotation.Permission;
 import lol.cicco.admin.common.exception.AlreadyUseException;
 import lol.cicco.admin.common.model.Page;
 import lol.cicco.admin.common.model.R;
@@ -22,22 +23,26 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
+    @Permission("sys:role:list")
     @GetMapping("/role-list")
     public String roleList() {
         return "role/role-list";
     }
 
+    @Permission("sys:role:add")
     @GetMapping("/role-add")
     public String roleAdd(){
         return "role/role-add";
     }
 
+    @Permission("sys:role:list")
     @ResponseBody
     @GetMapping("/list")
     public R list(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("roleName") String roleName) {
         return roleService.list(new Page(page, size), roleName);
     }
 
+    @Permission("sys:role:add")
     @ResponseBody
     @PostMapping("/add")
     public R add(@Valid RoleRequest role, BindingResult result){
@@ -50,6 +55,7 @@ public class RoleController {
         return roleService.save(role);
     }
 
+    @Permission("sys:role:remove")
     @ResponseBody
     @DeleteMapping("/{ids}")
     public R remove(@PathVariable("ids") String ids){

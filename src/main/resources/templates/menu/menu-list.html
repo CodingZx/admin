@@ -107,7 +107,7 @@
                     ,treePidName: 'parentId'
                     ,treeSpid: '-1'
                     ,treeColIndex: 3
-                    ,treeDefaultClose: false
+                    ,treeDefaultClose: true
                     ,height: 'full-140'
                     ,url:'/menu/list'
                     ,page: false
@@ -124,11 +124,14 @@
                               {field:'id', title: 'ID' ,align:'center', hide:'true'}
                               ,{type:'checkbox',width:'10%'}
                               ,{field:'parentId', title: 'ParentId' ,align:'center', hide:'true'}
-                              ,{field:'menuName', title: '菜单名称' ,align:'center'}
-                              ,{field:'menuUrl', title: 'URL',align:'center'}
-                              ,{field:'icon', title: '图标',align:'center',templet: function(d){
-                                return '<i class="layui-icon">'+d.icon+'</i> ';
+                              ,{field:'menuName', title: '菜单名称' ,align:'center',templet: function(d){
+                                return '<i class="layui-icon">'+d.icon+'</i>' +d.menuName;
                               }}
+                              ,{field:'menuUrl', title: 'URL',align:'center'}
+                              //,{field:'icon', title: '图标',align:'center',templet: function(d){
+                              //  return '<i class="layui-icon">'+d.icon+'</i> ';
+                              //}}
+                              ,{field:'permission', title: '权限',align:'center'}
                               ,{field:'sortBy', title: '排序值',align:'center'}
                               ,{field:'menuType', title: '菜单类型',align:'center'}
                               ,{field:'createTime', title: '创建时间',align:'center', hide:'true'}
@@ -146,7 +149,7 @@
 
               if(layEvent === 'del'){ //删除
                 layer.confirm('确认要删除吗?', function(index){
-                    ajax.delete("/admin/"+data.id, {}, function (res, status) {
+                    ajax.delete("/menu/"+data.id, {}, function (res, status) {
                         if (res.code == 200) {
                              layer.close(index);
                              reload();
@@ -164,29 +167,6 @@
                     xadmin.open('修改菜单','/menu/menu-edit?id='+data.id,600,height);
               } else if(layEvent === 'addSub') {
                     xadmin.open('添加菜单','/menu/menu-add?parent='+data.id,600,500);
-              }else if(layEvent === 'disable') { // 禁用
-                    layer.confirm('确认要禁用吗？',function(index){
-                        ajax.post("/admin/disable/"+data.id, {}, function (res, status) {
-                            if (res.code == 200) {
-                                 layer.close(index);
-                                 reload();
-                            } else {
-                                layer.msg(res.message, {time: 5000});
-                            }
-                        });
-                    });
-              } else if(layEvent === 'active'){
-                    layer.confirm('确认要激活吗？',function(index){
-                        ajax.post("/admin/active/"+data.id, {}, function (res, status) {
-                            if (res.code == 200) {
-                                 layer.close(index);
-                                 reload();
-                            } else {
-                                layer.msg(res.message, {time: 5000});
-                            }
-                        });
-                    });
-
               }
           });
 

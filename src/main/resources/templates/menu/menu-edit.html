@@ -22,6 +22,7 @@
         <div class="layui-fluid">
             <div class="layui-row">
                 <form class="layui-form" id="myForm">
+                    <input type="hidden" name="id" th:value="${menu.id}">
                   <div class="layui-form-item" th:if="${parentId != null}">
                       <label class="layui-form-label">
                           <span class="x-red"></span>父级菜单
@@ -145,7 +146,7 @@
                         type: 'POST',
                         success: function (data) {
                             if (data.code == 200) {
-                                layer.msg("新增成功", {time: 1000}, function() {
+                                layer.msg("修改成功", {time: 1000}, function() {
                                     //关闭当前frame
                                     xadmin.close();
 

@@ -3,6 +3,7 @@ package lol.cicco.admin.controller;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import lol.cicco.admin.common.Constants;
+import lol.cicco.admin.common.annotation.Permission;
 import lol.cicco.admin.common.model.Page;
 import lol.cicco.admin.common.model.R;
 import lol.cicco.admin.dto.request.AdminRequest;
@@ -27,17 +28,20 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
+    @Permission("sys:admin:list")
     @GetMapping("/admin-list")
     public String adminList(){
         return "admin/admin-list";
     }
 
+    @Permission("sys:admin:add")
     @GetMapping("/admin-add")
     public String adminAdd(Model model){
         model.addAttribute("roleList", roleService.all());
         return "admin/admin-add";
     }
 
+    @Permission("sys:admin:edit")
     @GetMapping("/admin-edit")
     public String adminEdit(@RequestParam("id")UUID id, Model model){
         AdminResponse response = adminService.findById(id);
@@ -49,12 +53,14 @@ public class AdminController {
         return "admin/admin-edit";
     }
 
+    @Permission("sys:admin:list")
     @ResponseBody
     @GetMapping("/list")
     public R list(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam("userName")String userName){
         return adminService.list(new Page(page, size), userName);
     }
 
+    @Permission("sys:admin:add")
     @ResponseBody
     @PostMapping("/add")
     public R add(@Valid AdminRequest admin, BindingResult result){
@@ -73,6 +79,7 @@ public class AdminController {
         return adminService.save(admin);
     }
 
+    @Permission("sys:admin:edit")
     @ResponseBody
     @PostMapping("/update")
     public R update(@Valid AdminRequest admin, BindingResult result){
@@ -93,6 +100,7 @@ public class AdminController {
         return adminService.save(admin);
     }
 
+    @Permission("sys:admin:status")
     @ResponseBody
     @PostMapping("/disable/{id}")
     public R disable(@PathVariable("id")UUID id){
@@ -102,6 +110,7 @@ public class AdminController {
         return adminService.updateStatus(id, false);
     }
 
+    @Permission("sys:admin:status")
     @ResponseBody
     @PostMapping("/active/{id}")
     public R active(@PathVariable("id")UUID id){
@@ -111,6 +120,7 @@ public class AdminController {
         return adminService.updateStatus(id, true);
     }
 
+    @Permission("sys:admin:remove")
     @ResponseBody
     @DeleteMapping("/{ids}")
     public R remove(@PathVariable("ids") String ids){
