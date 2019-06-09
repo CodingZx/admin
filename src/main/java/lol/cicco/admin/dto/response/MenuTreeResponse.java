@@ -14,6 +14,7 @@ public class MenuTreeResponse {
     private String icon;
     private boolean checked;
     private boolean leaf;
+    private String url;
     private List<MenuTreeResponse> children;
 
     public MenuTreeResponse(MenuEntity menu, boolean checked, boolean leaf){
@@ -23,5 +24,10 @@ public class MenuTreeResponse {
         this.checked = checked;
         this.children = Lists.newLinkedList();
         this.leaf = leaf;
+        this.url = menu.getMenuUrl();
+    }
+
+    public MenuTreeResponse(MenuEntity menu){
+        this(menu, true, false);
     }
 }

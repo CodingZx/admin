@@ -76,7 +76,7 @@ layui.define(['layer', 'table'], function (exports) {
                 }
                 if (isDir) {
                     if(d.icon && d.icon != '') {
-                        iconHtml += '<i class="layui-icon layui-icon-triangle-d"></i> <i class="layui-icon">'+d.icon+'</i>';
+                        iconHtml += '<i class="layui-icon layui-icon-triangle-d"></i> <i class="layui-icon '+d.icon+'"></i>';
                     } else {
                         iconHtml += '<i class="layui-icon layui-icon-triangle-d"></i> <i class="layui-icon">&#xe66e;</i>';
                     }

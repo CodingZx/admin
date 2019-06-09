@@ -1,7 +1,9 @@
 package lol.cicco.admin.common;
 
 import com.google.common.collect.Lists;
+import lol.cicco.admin.common.interceptor.LoginInterceptor;
 import lol.cicco.admin.common.util.GsonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -15,8 +17,12 @@ import java.util.List;
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
+	@Autowired
+	private LoginInterceptor loginInterceptor;
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(loginInterceptor);
 	}
 
 	@Override

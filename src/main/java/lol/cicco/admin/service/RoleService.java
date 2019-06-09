@@ -9,6 +9,7 @@ import lol.cicco.admin.common.exception.AlreadyUseException;
 import lol.cicco.admin.common.model.Page;
 import lol.cicco.admin.common.model.R;
 import lol.cicco.admin.common.model.Select;
+import lol.cicco.admin.common.model.Token;
 import lol.cicco.admin.common.util.SQLUtils;
 import lol.cicco.admin.dto.request.RoleRequest;
 import lol.cicco.admin.dto.response.MenuTreeResponse;
@@ -120,5 +121,22 @@ public class RoleService {
         });
 
         return R.ok(dicList);
+    }
+
+    public List<MenuTreeResponse> menuTree(Token token){
+        RoleEntity role = roleMapper.findById(token.getRoleId());
+        var roleMenus = Streams.stream(role.getMenus().getAsJsonArray("menus")).map(r->UUID.fromString(r.getAsString())).collect(Collectors.toList());
+
+        List<MenuEntity> list = menuMapper.findList();
+        // 第一层目录
+        var dicList = list.stream()
+                .filter(r -> r.getParentId() == null && roleMenus.contains(r.getId()))
+                .map(MenuTreeResponse::new)
+                .collect(Collectors.toList());
+        dicList.forEach(dic -> {
+            // 第二层链接
+            dic.setChildren(list.stream().filter(m -> dic.getId().equals(m.getParentId()) && roleMenus.contains(m.getId())).map(MenuTreeResponse::new).collect(Collectors.toList()));
+        });
+        return dicList;
     }
 }

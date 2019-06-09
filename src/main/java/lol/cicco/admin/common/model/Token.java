@@ -26,6 +26,22 @@ public class Token {
         this.createTime = LocalDateTime.now();
     }
 
+    public boolean check(){
+        if(adminId == null){
+            return false;
+        }
+
+        if(roleId == null){
+            return false;
+        }
+
+        if(createTime.isBefore(LocalDateTime.now().minusDays(7))){
+            return false;
+        }
+
+        return true;
+    }
+
     public static String createToken(AdminEntity admin){
         return RSAUtils.ecrypt(GsonUtils.gson().toJson(new Token(admin.getId(), admin.getRealName(), admin.getRoleId())), Constants.RSA.TOKEN_PUBLIC_KEY);
     }
