@@ -7,6 +7,8 @@ public class Constants {
 
     public static final String ADMIN_USER_TOKEN = "ADMIN_USER_TOKEN";
 
+    public static final String CICCO_PERMISSION_LIST = "CICCO_PERMISSION_LIST";
+
     /**
      * 404页面
      */

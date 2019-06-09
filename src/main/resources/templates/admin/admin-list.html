@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="x-admin-sm">
+<html class="x-admin-sm" xmlns:cicco="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>管理员列表</title>
@@ -15,6 +15,20 @@
     <script type="text/javascript" src="/js/jquery.form.js"></script>
     <script type="text/javascript" src="/js/cookie.js"></script>
     <script type="text/javascript" src="/js/ajax.js"></script>
+    <script type="text/javascript">
+        var s_edit_h = false;
+        var s_remove_h = false;
+        var s_status_h = false;
+    </script>
+    <script cicco:permission="sys:admin:edit">
+        s_edit_h = true;
+    </script>
+    <script cicco:permission="sys:admin:remove">
+        s_remove_h = true;
+    </script>
+    <script cicco:permission="sys:admin:status">
+        s_status_h = true;
+    </script>
 </head>
 <body>
 <div class="x-nav">
@@ -42,8 +56,8 @@
                     </form>
                 </div>
                 <div class="layui-card-header">
-                    <button class="layui-btn" id="addBtn"><i class="layui-icon">&#xe654;</i>添加</button>
-                    <button class="layui-btn layui-btn-danger" id="batchRemoveBtn"><i class="layui-icon">&#xe640;</i>删除</button>
+                    <button class="layui-btn" cicco:permission="sys:admin:add" id="addBtn"><i class="layui-icon">&#xe654;</i>添加</button>
+                    <button class="layui-btn layui-btn-danger" cicco:permission="sys:admin:remove" id="batchRemoveBtn"><i class="layui-icon">&#xe640;</i>删除</button>
                 </div>
                 <div class="layui-card-body">
                     <table class="layui-form" id="table" lay-filter="table"></table>
@@ -54,12 +68,19 @@
 </div>
 </body>
 <script type="text/html" id="operate">
-    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
-    {{#  if(d.status+'' == 'true'){ }}
-    <span class="layui-btn layui-btn-warm layui-btn-mini" lay-event="disable"><i class="layui-icon">&#x1006;</i>禁用</span>
-    {{#  } else { }}
-    <span class="layui-btn layui-btn-normal layui-btn-mini" lay-event="active"><i class="layui-icon">&#xe605;</i>启用</span>
+    {{#  if(s_edit_h+'' == 'true'){ }}
+        <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+    {{#  } }}
+    {{#  if(s_edit_h+'' == 'true'){ }}
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
+    {{#  } }}
+
+    {{#  if(s_status_h+'' == 'true'){ }}
+        {{#  if(d.status+'' == 'true'){ }}
+            <span class="layui-btn layui-btn-warm layui-btn-mini" lay-event="disable"><i class="layui-icon">&#x1006;</i>禁用</span>
+        {{#  } else { }}
+            <span class="layui-btn layui-btn-normal layui-btn-mini" lay-event="active"><i class="layui-icon">&#xe605;</i>启用</span>
+        {{#  } }}
     {{#  } }}
 </script>
 <script>

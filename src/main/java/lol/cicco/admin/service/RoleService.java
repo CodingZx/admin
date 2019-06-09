@@ -1,6 +1,7 @@
 package lol.cicco.admin.service;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonArray;
@@ -145,7 +146,7 @@ public class RoleService {
         return dicList;
     }
 
-    public boolean hasPermission(Token token, List<String> permissions) {
+    public List<String> getPermissions(Token token) {
         var role = roleMapper.findById(token.getRoleId());
         var menuArr = role.getMenus().getAsJsonArray("menus");
 
@@ -156,15 +157,10 @@ public class RoleService {
         }
 
         if (roleMenus.isEmpty()) {
-            return false;
+            return Lists.newLinkedList();
         }
         var menus = menuMapper.findByIds(roleMenus);
 
-        for(var menu : menus){
-            if(permissions.contains(menu.getPermission())){
-                return true;
-            }
-        }
-        return false;
+        return menus.stream().map(MenuEntity::getPermission).filter(a -> !Strings.isNullOrEmpty(a)).collect(Collectors.toList());
     }
 }

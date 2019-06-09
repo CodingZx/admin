@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="x-admin-sm">
+<html class="x-admin-sm" xmlns:cicco="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>菜单列表</title>
@@ -30,6 +30,20 @@
             content: "\e621";
         }
     </style>
+    <script type="text/javascript">
+        var s_add_h = false;
+        var s_edit_h = false;
+        var s_remove_h = false;
+    </script>
+    <script cicco:permission="sys:menu:add">
+        s_add_h = true;
+    </script>
+    <script cicco:permission="sys:menu:edit">
+        s_edit_h = true;
+    </script>
+    <script cicco:permission="sys:menu:remove">
+        s_remove_h = true;
+    </script>
 </head>
 <body>
 <div class="x-nav">
@@ -44,8 +58,8 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <button class="layui-btn" id="addBtn"><i class="layui-icon">&#xe654;</i>添加</button>
-                    <button class="layui-btn layui-btn-danger" id="batchRemoveBtn"><i class="layui-icon">&#xe640;</i>删除</button>
+                    <button cicco:permission="sys:menu:add" class="layui-btn" id="addBtn"><i class="layui-icon">&#xe654;</i>添加</button>
+                    <button cicco:permission="sys:menu:remove" class="layui-btn layui-btn-danger" id="batchRemoveBtn"><i class="layui-icon">&#xe640;</i>删除</button>
                 </div>
                 <div class="layui-card-body">
                     <table class="layui-form" id="table" lay-filter="table"></table>
@@ -56,9 +70,15 @@
 </div>
 </body>
 <script type="text/html" id="operate">
-    <button class="layui-btn" lay-event="addSub"><i class="layui-icon">&#xe654;</i>添加</button>
-    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
+    {{#  if(s_add_h+'' == 'true'){ }}
+        <button class="layui-btn" lay-event="addSub"><i class="layui-icon">&#xe654;</i>添加</button>
+    {{#  } }}
+    {{#  if(s_edit_h+'' == 'true'){ }}
+        <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+    {{#  } }}
+    {{#  if(s_remove_h+'' == 'true'){ }}
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
+    {{#  } }}
 </script>
 <script>
       layui.config({
