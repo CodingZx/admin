@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public class RoleController {
 
     @ResponseBody
     @PostMapping("/add")
-    public R add(RoleRequest role, BindingResult result){
+    public R add(@Valid RoleRequest role, BindingResult result){
         if(result.hasErrors()){
             return R.other(result.getFieldError().getDefaultMessage());
         }

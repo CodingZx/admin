@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,7 +57,7 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/add")
-    public R add(AdminRequest admin, BindingResult result){
+    public R add(@Valid AdminRequest admin, BindingResult result){
         if(result.hasErrors()){
             return R.other(result.getFieldError().getDefaultMessage());
         }
@@ -74,7 +75,7 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/update")
-    public R update(AdminRequest admin, BindingResult result){
+    public R update(@Valid AdminRequest admin, BindingResult result){
         if(result.hasErrors()){
             return R.other(result.getFieldError().getDefaultMessage());
         }

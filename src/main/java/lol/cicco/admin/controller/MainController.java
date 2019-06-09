@@ -21,5 +21,9 @@ public class MainController {
         return "welcome";
     }
 
+    @GetMapping("/404")
+    public String notfound(){
+        return "404";
+    }
 
 }

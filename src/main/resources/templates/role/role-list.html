@@ -174,29 +174,6 @@
                 });
               } else if(layEvent === 'edit'){ //编辑
                     xadmin.open('添加用户','/admin/admin-edit?id='+data.id,600,400);
-              } else if(layEvent === 'disable') { // 禁用
-                    layer.confirm('确认要禁用吗？',function(index){
-                        ajax.post("/admin/disable/"+data.id, {}, function (res, status) {
-                            if (res.code == 200) {
-                                 layer.close(index);
-                                 reload();
-                            } else {
-                                layer.msg(res.message, {time: 5000});
-                            }
-                        });
-                    });
-              } else if(layEvent === 'active'){
-                    layer.confirm('确认要禁用吗？',function(index){
-                        ajax.post("/admin/active/"+data.id, {}, function (res, status) {
-                            if (res.code == 200) {
-                                 layer.close(index);
-                                 reload();
-                            } else {
-                                layer.msg(res.message, {time: 5000});
-                            }
-                        });
-                    });
-
               }
           });
 

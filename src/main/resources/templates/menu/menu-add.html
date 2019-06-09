@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>新增菜单</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="/css/font.css">
+        <link rel="stylesheet" href="/css/xadmin.css">
+        <script src="/js/jquery.min.js" charset="utf-8"></script>
+        <script src="/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/js/xadmin.js"></script>
+        <script type="text/javascript" src="/js/jquery.cookie.js"></script>
+        <script type="text/javascript" src="/js/jquery.form.js"></script>
+        <script type="text/javascript" src="/js/cookie.js"></script>
+        <script type="text/javascript" src="/js/ajax.js"></script>
+
+    </head>
+    <body>
+        <div class="layui-fluid">
+            <div class="layui-row">
+                <form class="layui-form" id="myForm">
+                  <div class="layui-form-item" th:if="${parentId != null}">
+                      <label class="layui-form-label">
+                          <span class="x-red"></span>父级菜单
+                      </label>
+                      <div class="layui-input-inline">
+                          <input type="hidden" name="parentId" th:value="${parentId}">
+                          <input type="text" th:value="${parentName}" disabled="disabled" autocomplete="off" class="layui-input">
+                      </div>
+                      <div class="layui-form-mid layui-word-aux">
+
+                      </div>
+                  </div>
+                    <div class="layui-form-item">
+                        <label for="menuName" class="layui-form-label">
+                            <span class="x-red">*</span>菜单名称
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="menuName" name="menuName" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><span class="x-red">*</span>类型</label>
+                        <div class="layui-input-inline">
+                            <select name="menuType" lay-verify="required">
+                                <option value="DIC"> -- 目录 -- </option>
+                                <option value="LINK"> -- 链接 -- </option>
+                                <option value="BUTTON"> -- 按钮 -- </option>
+                            </select>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="menuUrl" class="layui-form-label">
+                            URL
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="menuUrl" name="menuUrl" required="" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+                            目录需要填写
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="sortBy" class="layui-form-label">
+                            <span class="x-red"></span>排序值
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="sortBy" name="sortBy" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+                            数值越大越靠前
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item">
+                        <label for="icon" class="layui-form-label">
+                            菜单图标
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="icon" name="icon" required="" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+                            目录需要填写
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="permission" class="layui-form-label">
+                            对应权限
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="permission" name="permission" required="" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+
+                        </div>
+                    </div>
+
+
+                  <div class="layui-form-item">
+                      <label class="layui-form-label">
+                      </label>
+                      <button type="submit" class="layui-btn layui-btn-normal" lay-filter="add" lay-submit="">
+                          确认
+                      </button>
+                      <button type="button" class="layui-btn layui-btn-danger" id="cancel">
+                          取消
+                      </button>
+                  </div>
+              </form>
+            </div>
+        </div>
+        <script>
+            layui.use(['form','layer'], function(){
+                $ = layui.jquery;
+                var form = layui.form,
+                layer = layui.layer;
+
+                $("#cancel").click(function(){
+                    xadmin.close();
+                });
+
+                //自定义验证规则
+                form.verify({
+
+                });
+
+                //监听提交
+                form.on('submit(add)', function(data) {
+                    var options = {
+                        url: '/menu/add',
+                        type: 'POST',
+                        success: function (data) {
+                            if (data.code == 200) {
+                                layer.msg("新增成功", {time: 1000}, function() {
+                                    //关闭当前frame
+                                    xadmin.close();
+
+                                    // 可以对父窗口进行刷新
+                                    xadmin.father_reload();
+                                });
+                            } else {
+                                layer.msg(data.message, {time: 5000});
+                            }
+                        },
+                        dataType: 'json' //服务器返回数据类型
+                    };
+                    $("#myForm").ajaxSubmit(options);
+                    return false;
+                });
+            });
+        </script>
+    </body>
+
+</html>
