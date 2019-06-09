@@ -1,15 +1,18 @@
 package lol.cicco.admin.controller;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
 import lol.cicco.admin.common.Constants;
 import lol.cicco.admin.common.annotation.Permission;
 import lol.cicco.admin.common.exception.AlreadyUseException;
 import lol.cicco.admin.common.model.Page;
 import lol.cicco.admin.common.model.R;
 import lol.cicco.admin.dto.request.RoleRequest;
+import lol.cicco.admin.dto.response.RoleResponse;
 import lol.cicco.admin.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +38,18 @@ public class RoleController {
         return "role/role-add";
     }
 
+    @Permission("sys:role:edit")
+    @GetMapping("/role-edit")
+    public String roleEdit(@RequestParam("id")UUID id, Model model){
+        RoleResponse response = roleService.findById(id);
+        if(response == null) {
+            return Constants.NOT_FOUND_PAGE;
+        }
+
+        model.addAttribute("role", response);
+        return "role/role-edit";
+    }
+
     @Permission("sys:role:list")
     @ResponseBody
     @GetMapping("/list")
@@ -52,7 +67,36 @@ public class RoleController {
         if(role.getId() != null) {
             return R.other("非法请求");
         }
-        return roleService.save(role);
+        JsonArray menus = new JsonArray();
+        try{
+            for (String s : role.getMenus().split(",")){
+                menus.add(UUID.fromString(s).toString());
+            }
+        }catch (Exception e){
+            return R.other("非法请求");
+        }
+        return roleService.save(role, menus);
+    }
+
+    @Permission("sys:role:edit")
+    @ResponseBody
+    @PostMapping("/edit")
+    public R edit(@Valid RoleRequest role, BindingResult result){
+        if(result.hasErrors()){
+            return R.other(result.getFieldError().getDefaultMessage());
+        }
+        if(role.getId() == null) {
+            return R.other("非法请求");
+        }
+        JsonArray menus = new JsonArray();
+        try{
+            for (String s : role.getMenus().split(",")){
+                menus.add(UUID.fromString(s).toString());
+            }
+        }catch (Exception e){
+            return R.other("非法请求");
+        }
+        return roleService.save(role, menus);
     }
 
     @Permission("sys:role:remove")
@@ -75,5 +119,12 @@ public class RoleController {
         }catch (AlreadyUseException e) {
             return R.other(e.getMsg());
         }
+    }
+
+    @Permission({"sys:role:edit", "sys:role:add"})
+    @GetMapping("/menus")
+    @ResponseBody
+    public R menus(@RequestParam(value = "roleId", required = false) UUID roleId){
+        return roleService.menus(roleId);
     }
 }

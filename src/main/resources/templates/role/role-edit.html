@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="x-admin-sm">
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
     
     <head>
         <meta charset="UTF-8">
-        <title>新增角色</title>
+        <title>修改角色</title>
         <meta name="renderer" content="webkit">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
@@ -30,11 +30,12 @@
             <div class="layui-row">
                 <form class="layui-form" id="myForm">
                   <div class="layui-form-item">
+                      <input type="hidden" id="id" name="id" th:value="${role.id}">
                       <label for="roleName" class="layui-form-label">
                           <span class="x-red">*</span>账号
                       </label>
                       <div class="layui-input-inline">
-                          <input type="text" id="roleName" name="roleName" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                          <input type="text" id="roleName" name="roleName" th:value="${role.roleName}" required="" lay-verify="required" autocomplete="off" class="layui-input">
                       </div>
                       <div class="layui-form-mid layui-word-aux">
 
@@ -86,13 +87,14 @@
                 form.verify({
 
                 });
+                var id = $("#id").val();
                 var el = eleTree.render({
                     elem: '#menus',
                     showCheckbox: true,
                     showLine: true,
                     url: '/role/menus',
                     method: 'GET',
-                    where:{},
+                    where:{roleId:id},
                     highlightCurrent:true,
                     defaultExpandAll:true,
                     request: {
@@ -129,11 +131,11 @@
                         return;
                     }
                     var options = {
-                        url: '/role/add',
+                        url: '/role/edit',
                         type: 'POST',
                         success: function (data) {
                             if (data.code == 200) {
-                                layer.msg("新增成功", {time: 1000}, function() {
+                                layer.msg("修改成功", {time: 1000}, function() {
                                     //关闭当前frame
                                     xadmin.close();
 

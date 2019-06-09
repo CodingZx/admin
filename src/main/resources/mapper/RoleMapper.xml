@@ -4,18 +4,19 @@
 <mapper namespace="lol.cicco.admin.mapper.RoleMapper">
 
 	<sql id="findColumns">
-		id, role_name, create_time
+		id, role_name, create_time, menus
 	</sql>
 
 	<insert id="addRole" parameterType="lol.cicco.admin.entity.RoleEntity">
-		insert into a_role(id,role_name,create_time)
-		values(#{id},#{roleName},#{createTime})
+		insert into a_role(id,role_name,create_time, menus)
+		values(#{id},#{roleName},#{createTime},#{menus})
 	</insert>
 
 	<update id="updateRole" parameterType="lol.cicco.admin.entity.RoleEntity">
 		update a_role
 		<set>
-			role_name = #{roleName}
+			role_name = #{roleName},
+			menus = #{menus}
 		</set>
 		where id = #{id}
 	</update>
