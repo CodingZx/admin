@@ -109,7 +109,7 @@ public class RoleController {
                 UUID fromId = UUID.fromString(id);
 
                 if(fromId.equals(Constants.DEFAULT_ID)){
-                    return R.other("无法删除最高管理员!");
+                    return R.other("无法删除系统管理员!");
                 }
                 uuids.add(fromId);
             } catch (Exception ignored){}

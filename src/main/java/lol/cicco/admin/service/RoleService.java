@@ -119,12 +119,12 @@ public class RoleService {
                 // 第三层按钮
                 c.setChildren(list.stream().filter(m -> c.getId().equals(m.getParentId())).map(r -> new MenuTreeResponse(r, roleMenus.contains(r.getId()), true)).collect(Collectors.toList()));
 
-                if(c.getChildren().size() > 0){
+                if(c.getChildren().stream().anyMatch(MenuTreeResponse::isChecked)){
                     c.setChecked(true);
                 }
             });
 
-            if(dic.getChildren().size() > 0){
+            if(dic.getChildren().stream().anyMatch(MenuTreeResponse::isChecked)){
                 dic.setChecked(true);
             }
         });
@@ -140,11 +140,12 @@ public class RoleService {
         // 第一层目录
         var dicList = list.stream()
                 .filter(r -> r.getParentId() == null && roleMenus.contains(r.getId()))
+                .sorted((o1, o2) -> o2.getSortBy() - o1.getSortBy())
                 .map(MenuTreeResponse::new)
                 .collect(Collectors.toList());
         dicList.forEach(dic -> {
             // 第二层链接
-            dic.setChildren(list.stream().filter(m -> dic.getId().equals(m.getParentId()) && roleMenus.contains(m.getId())).map(MenuTreeResponse::new).collect(Collectors.toList()));
+            dic.setChildren(list.stream().filter(m -> dic.getId().equals(m.getParentId()) && roleMenus.contains(m.getId())).sorted((o1,o2) -> o2.getSortBy() - o1.getSortBy()).map(MenuTreeResponse::new).collect(Collectors.toList()));
         });
         return dicList;
     }

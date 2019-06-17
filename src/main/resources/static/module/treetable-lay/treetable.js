@@ -61,10 +61,8 @@ layui.define(['layer', 'table'], function (exports) {
             // 重写参数
             param.url = undefined;
             param.data = mData;
-            param.page = {
-                count: param.data.length,
-                limit: param.data.length
-            };
+            param.limit = param.data.length;
+
             param.cols[0][param.treeColIndex].templet = function (d) {
                 var mId = d.id;
                 var mPid = d.pid;
