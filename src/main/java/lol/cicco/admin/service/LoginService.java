@@ -10,6 +10,8 @@ import lol.cicco.admin.mapper.AdminMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.weekend.WeekendSqls;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -18,7 +20,7 @@ public class LoginService {
     private AdminMapper adminMapper;
 
     public R login(LoginRequest login){
-        AdminEntity admin = adminMapper.findByUserName(login.getUserName());
+        AdminEntity admin = adminMapper.selectOneByExample(Example.builder(AdminEntity.class).where(WeekendSqls.<AdminEntity>custom().andEqualTo(AdminEntity::getUserName, login.getUserName().trim())).build());;
         if(admin == null) {
             return R.other("账号密码不正确");
         }

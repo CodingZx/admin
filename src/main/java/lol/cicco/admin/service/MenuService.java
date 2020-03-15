@@ -10,6 +10,8 @@ import lol.cicco.admin.mapper.MenuMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.weekend.WeekendSqls;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +27,7 @@ public class MenuService {
     private MenuMapper menuMapper;
 
     public MenuResponse findOne(UUID id){
-        var menu = menuMapper.findById(id);
+        var menu = menuMapper.selectByPrimaryKey(id);
         if(menu == null) {
             return null;
         }
@@ -33,26 +35,26 @@ public class MenuService {
     }
 
     public R list(){
-        var menus = menuMapper.findList();
+        var menus = menuMapper.selectAll();
         return R.ok(menus.stream().map(MenuResponse::new).sorted((o1,o2)->o2.getSortBy()-o1.getSortBy()).collect(Collectors.toList()));
     }
 
     public R save(MenuRequest menu) {
         MenuEntity menuEntity = new MenuEntity();
-        menuEntity.setCreateTime(LocalDateTime.now());
         menuEntity.setIcon(menu.getIcon());
         menuEntity.setId(menu.getId());
         menuEntity.setMenuName(menu.getMenuName());
         menuEntity.setMenuType(menu.getMenuType());
         menuEntity.setMenuUrl(menu.getMenuUrl());
-        menuEntity.setParentId(menu.getParentId() == null ? null : UUID.fromString(menu.getParentId()));
         menuEntity.setPermission(menu.getPermission());
         menuEntity.setSortBy(menu.getSortBy());
         if(menuEntity.getId() == null){
             menuEntity.setId(Generators.timeBasedGenerator().generate());
-            menuMapper.add(menuEntity);
+            menuEntity.setCreateTime(LocalDateTime.now());
+            menuEntity.setParentId(menu.getParentId() == null ? null : UUID.fromString(menu.getParentId()));
+            menuMapper.insert(menuEntity);
         } else {
-            menuMapper.update(menuEntity);
+            menuMapper.updateByPrimaryKeySelective(menuEntity);
         }
         return R.ok();
     }
@@ -61,9 +63,9 @@ public class MenuService {
         Queue<UUID> queue = Lists.newLinkedList(ids);
         while(!queue.isEmpty()) {
             UUID take = queue.remove();
-            var list = menuMapper.findByParentId(take);
+            var list = menuMapper.selectByExample(Example.builder(MenuEntity.class).where(WeekendSqls.<MenuEntity>custom().andEqualTo(MenuEntity::getParentId, take)).build());
             queue.addAll(list.stream().map(MenuEntity::getId).filter(Objects::nonNull).collect(Collectors.toList()));
-            menuMapper.removeById(take);
+            menuMapper.deleteByPrimaryKey(take);
         }
         return R.ok();
     }

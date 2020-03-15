@@ -25,6 +25,8 @@ import lol.cicco.admin.mapper.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.weekend.WeekendSqls;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,20 +44,25 @@ public class RoleService {
     private MenuMapper menuMapper;
 
     public List<Select> all() {
-        return roleMapper.findAll().stream().map(r -> new Select(r.getId(), r.getRoleName())).collect(Collectors.toList());
+        return roleMapper.selectAll().stream().map(r -> new Select(r.getId(), r.getRoleName())).collect(Collectors.toList());
     }
 
     public RoleResponse findById(UUID roleId) {
-        RoleEntity role = roleMapper.findById(roleId);
+        RoleEntity role = roleMapper.selectByPrimaryKey(roleId);
         if (role == null) {
             return null;
         }
         return new RoleResponse(role);
     }
 
-    public R list(Page page, String userName) {
-        var list = roleMapper.findList(SQLUtils.fuzzyAll(userName), page.getSize(), page.getStart());
-        var count = roleMapper.findCount(SQLUtils.fuzzyAll(userName));
+    public R list(Page page, String roleName) {
+        var weekendSql = WeekendSqls.<RoleEntity>custom();
+        if(!Strings.isNullOrEmpty(roleName)) {
+            weekendSql.andLike(RoleEntity::getRoleName, SQLUtils.fuzzyAll(roleName));
+        }
+        var example = Example.builder(RoleEntity.class).where(weekendSql).build();
+        var list = roleMapper.selectByExampleAndRowBounds(example, page.getBounds());
+        var count = roleMapper.selectCountByExample(example);
 
         return R.ok(list.stream().map(RoleResponse::new).collect(Collectors.toList()), count);
     }
@@ -63,7 +70,6 @@ public class RoleService {
     public R save(RoleRequest role, JsonArray menus) {
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setId(role.getId());
-        roleEntity.setCreateTime(LocalDateTime.now());
         roleEntity.setRoleName(role.getRoleName());
 
         JsonObject menuObj = new JsonObject();
@@ -72,9 +78,10 @@ public class RoleService {
 
         if (roleEntity.getId() == null) {
             roleEntity.setId(Generators.timeBasedGenerator().generate());
-            roleMapper.addRole(roleEntity);
+            roleEntity.setCreateTime(LocalDateTime.now());
+            roleMapper.insert(roleEntity);
         } else {
-            roleMapper.updateRole(roleEntity);
+            roleMapper.updateByPrimaryKeySelective(roleEntity);
         }
         return R.ok();
     }
@@ -82,12 +89,12 @@ public class RoleService {
     public R remove(List<UUID> ids) {
         List<String> resultList = Lists.newLinkedList();
         for (UUID id : ids) {
-            AdminEntity admin = adminMapper.checkRole(id);
-            if (admin != null) { // 角色正在被使用
-                RoleEntity role = roleMapper.findById(id);
+            int count = adminMapper.selectCountByExample(Example.builder(AdminEntity.class).where(WeekendSqls.<AdminEntity>custom().andEqualTo(AdminEntity::getRoleId, id)).build());
+            if (count > 0) { // 角色正在被使用
+                RoleEntity role = roleMapper.selectByPrimaryKey(id);
                 resultList.add(role.getRoleName());
             } else {
-                roleMapper.remove(id);
+                roleMapper.deleteByPrimaryKey(id);
             }
         }
         if (!resultList.isEmpty()) {
@@ -99,13 +106,13 @@ public class RoleService {
     public R menus(UUID roleId) {
         List<UUID> roleMenus = Lists.newLinkedList();
         if (roleId != null) {
-            RoleEntity role = roleMapper.findById(roleId);
+            RoleEntity role = roleMapper.selectByPrimaryKey(roleId);
             if (role == null) {
                 return R.other("非法请求");
             }
             roleMenus.addAll(Streams.stream(role.getMenus().getAsJsonArray("menus")).map(r -> UUID.fromString(r.getAsString())).collect(Collectors.toList()));
         }
-        List<MenuEntity> list = menuMapper.findList();
+        List<MenuEntity> list = menuMapper.selectAll();
 
         // 第一层目录
         var dicList = list.stream()
@@ -134,10 +141,10 @@ public class RoleService {
     }
 
     public List<MenuTreeResponse> menuTree(Token token) {
-        RoleEntity role = roleMapper.findById(token.getRoleId());
+        RoleEntity role = roleMapper.selectByPrimaryKey(token.getRoleId());
         var roleMenus = Streams.stream(role.getMenus().getAsJsonArray("menus")).map(r -> UUID.fromString(r.getAsString())).collect(Collectors.toList());
 
-        List<MenuEntity> list = menuMapper.findList();
+        List<MenuEntity> list = menuMapper.selectAll();
         // 第一层目录
         var dicList = list.stream()
                 .filter(r -> r.getParentId() == null && roleMenus.contains(r.getId()))
@@ -152,7 +159,7 @@ public class RoleService {
     }
 
     public List<String> getPermissions(Token token) {
-        var role = roleMapper.findById(token.getRoleId());
+        var role = roleMapper.selectByPrimaryKey(token.getRoleId());
         var menuArr = role.getMenus().getAsJsonArray("menus");
 
         List<UUID> roleMenus = Lists.newLinkedList();
@@ -164,7 +171,7 @@ public class RoleService {
         if (roleMenus.isEmpty()) {
             return Lists.newLinkedList();
         }
-        var menus = menuMapper.findByIds(roleMenus);
+        var menus = menuMapper.selectByExample(Example.builder(MenuEntity.class).where(WeekendSqls.<MenuEntity>custom().andIn(MenuEntity::getId, roleMenus)).build());
 
         return menus.stream().map(MenuEntity::getPermission).filter(a -> !Strings.isNullOrEmpty(a)).collect(Collectors.toList());
     }

@@ -1,26 +1,8 @@
 package lol.cicco.admin.mapper;
 
 import lol.cicco.admin.entity.MenuEntity;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import tk.mybatis.mapper.common.Mapper;
 
-import java.util.List;
-import java.util.UUID;
+public interface MenuMapper extends Mapper<MenuEntity> {
 
-@Mapper
-public interface MenuMapper {
-
-    List<MenuEntity> findList();
-
-    void add(MenuEntity menu);
-
-    void update(MenuEntity menu);
-
-    MenuEntity findById(@Param("id") UUID id);
-
-    List<MenuEntity> findByIds(@Param("ids")List<UUID> ids);
-
-    void removeById(@Param("id")UUID id);
-
-    List<MenuEntity> findByParentId(@Param("id")UUID id);
 }

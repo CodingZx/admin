@@ -22,7 +22,7 @@ public class AdminResponse {
         this.userName = admin.getUserName();
         this.realName = admin.getRealName();
         this.createTime = admin.getCreateTime();
-        this.status = admin.isStatus();
+        this.status = admin.getStatus();
         if(roleEntity != null) {
             this.roleId = roleEntity.getId();
             this.roleName = roleEntity.getRoleName();
