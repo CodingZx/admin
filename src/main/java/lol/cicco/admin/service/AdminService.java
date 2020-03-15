@@ -1,8 +1,8 @@
 package lol.cicco.admin.service;
 
 import com.fasterxml.uuid.Generators;
-import com.github.pagehelper.PageRowBounds;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import lol.cicco.admin.common.model.Page;
 import lol.cicco.admin.common.model.R;
 import lol.cicco.admin.common.util.PasswordUtils;
@@ -13,7 +13,6 @@ import lol.cicco.admin.entity.AdminEntity;
 import lol.cicco.admin.entity.RoleEntity;
 import lol.cicco.admin.mapper.AdminMapper;
 import lol.cicco.admin.mapper.RoleMapper;
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +52,15 @@ public class AdminService {
         var list = adminMapper.selectByExampleAndRowBounds(example.build(), page.getBounds());
         var count = adminMapper.selectCountByExample(example.build());
 
-        return R.ok(list.stream().map(r -> new AdminResponse(r, roleMapper.selectByPrimaryKey(r.getRoleId()))).collect(Collectors.toList()), count);
+        var roleIds = list.stream().map(AdminEntity::getRoleId).collect(Collectors.toList());
+        List<RoleEntity> roles;
+        if(!roleIds.isEmpty()) {
+            roles = roleMapper.selectByExample(Example.builder(RoleEntity.class).where(WeekendSqls.<RoleEntity>custom().andIn(RoleEntity::getId, roleIds)).build());
+        } else {
+             roles = Lists.newLinkedList();
+        }
+
+        return R.ok(list.stream().map(r -> new AdminResponse(r, roles.stream().filter(a -> a.getId().equals(r.getRoleId())).findFirst().orElse(null))).collect(Collectors.toList()), count);
     }
 
     public R save(AdminRequest admin){
