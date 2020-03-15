@@ -35,8 +35,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
 		GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter(GsonUtils.gson());
 		gsonHttpMessageConverter.setDefaultCharset(StandardCharsets.UTF_8);
-		gsonHttpMessageConverter.setSupportedMediaTypes(Lists.newArrayList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON_UTF8));
+		gsonHttpMessageConverter.setSupportedMediaTypes(Lists.newArrayList(MediaType.APPLICATION_JSON));
 
 		converters.add(gsonHttpMessageConverter);
 	}
+
 }

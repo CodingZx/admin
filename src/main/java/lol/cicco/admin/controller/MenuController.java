@@ -11,7 +11,6 @@ import lol.cicco.admin.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,16 +20,20 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/menu")
 public class MenuController {
+    public static final String MENU_LIST = "sys:menu:list";
+    public static final String MENU_ADD = "sys:menu:add";
+    public static final String MENU_EDIT = "sys:menu:edit";
+    public static final String MENU_REMOVE = "sys:menu:remove";
     @Autowired
     private MenuService menuService;
 
-    @Permission("sys:menu:list")
+    @Permission(MENU_LIST)
     @GetMapping("/menu-list")
     public String menuList(){
         return "menu/menu-list";
     }
 
-    @Permission("sys:menu:add")
+    @Permission(MENU_ADD)
     @GetMapping("/menu-add")
     public String menuAdd(@RequestParam(value = "parent", required = false) UUID parent, Model model){
         if(parent != null) {
@@ -44,7 +47,7 @@ public class MenuController {
         return "menu/menu-add";
     }
 
-    @Permission("sys:menu:edit")
+    @Permission(MENU_EDIT)
     @GetMapping("/menu-edit")
     public String menuEdit(@RequestParam("id")UUID id, Model model){
         MenuResponse menu = menuService.findOne(id);
@@ -63,7 +66,7 @@ public class MenuController {
         return "menu/menu-edit";
     }
 
-    @Permission("sys:menu:list")
+    @Permission(MENU_LIST)
     @ResponseBody
     @GetMapping("/list")
     public R list(){
@@ -71,13 +74,10 @@ public class MenuController {
     }
 
 
-    @Permission("sys:menu:add")
+    @Permission(MENU_ADD)
     @ResponseBody
     @PostMapping("/add")
-    public R add(@Valid MenuRequest menu, BindingResult result){
-        if(result.hasErrors()){
-            return R.other(result.getFieldError().getDefaultMessage());
-        }
+    public R add(@Valid MenuRequest menu){
         // 校验格式
         try {
             if(menu.getParentId() != null) {
@@ -93,13 +93,10 @@ public class MenuController {
         return menuService.save(menu);
     }
 
-    @Permission("sys:menu:edit")
+    @Permission(MENU_EDIT)
     @ResponseBody
     @PostMapping("/edit")
-    public R update(@Valid MenuRequest menu, BindingResult result){
-        if(result.hasErrors()){
-            return R.other(result.getFieldError().getDefaultMessage());
-        }
+    public R update(@Valid MenuRequest menu){
         try {
             MenuType.valueOf(menu.getMenuType().toUpperCase());
         }catch (Exception e){
@@ -111,17 +108,17 @@ public class MenuController {
         return menuService.save(menu);
     }
 
-    @Permission("sys:menu:remove")
+    @Permission(MENU_REMOVE)
     @ResponseBody
     @DeleteMapping("/{ids}")
     public R remove(@PathVariable("ids") String ids){
-        List<UUID> uuids = Lists.newLinkedList();
+        List<UUID> uuidList = Lists.newLinkedList();
         for(String id : ids.split(",")){
             try{
-                uuids.add(UUID.fromString(id));
+                uuidList.add(UUID.fromString(id));
             } catch (Exception ignored){}
         }
 
-        return menuService.remove(uuids);
+        return menuService.remove(uuidList);
     }
 }

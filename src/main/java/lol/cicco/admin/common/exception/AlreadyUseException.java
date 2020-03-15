@@ -1,10 +1,10 @@
 package lol.cicco.admin.common.exception;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
 public class AlreadyUseException extends RuntimeException {
 
+    @Getter
     private String msg;
 
     public AlreadyUseException(String msg){

@@ -58,7 +58,11 @@ public class R {
     }
 
     public static R error() {
-        return new R(ERROR, "系统异常");
+        return error("系统异常");
+    }
+
+    public static R error(String msg) {
+        return new R(ERROR, msg);
     }
 
     public static R login() {

@@ -7,7 +7,6 @@
 		id, user_name, real_name, password, create_time, status, role_id
 	</sql>
 
-
 	<insert id="add" parameterType="lol.cicco.admin.entity.AdminEntity">
 		insert into a_admin(id,user_name,password,real_name,create_time,status,role_id)
 		values (#{id},#{userName},#{password},#{realName},#{createTime},#{status},#{roleId})

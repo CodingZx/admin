@@ -13,7 +13,6 @@ import lol.cicco.admin.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,22 +22,27 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/role")
 public class RoleController {
+    public static final String ROLE_LIST = "sys:role:list";
+    public static final String ROLE_ADD = "sys:role:add";
+    public static final String ROLE_EDIT = "sys:role:edit";
+    public static final String ROLE_REMOVE = "sys:role:remove";
+
     @Autowired
     private RoleService roleService;
 
-    @Permission("sys:role:list")
+    @Permission(ROLE_LIST)
     @GetMapping("/role-list")
     public String roleList() {
         return "role/role-list";
     }
 
-    @Permission("sys:role:add")
+    @Permission(ROLE_ADD)
     @GetMapping("/role-add")
     public String roleAdd(){
         return "role/role-add";
     }
 
-    @Permission("sys:role:edit")
+    @Permission(ROLE_EDIT)
     @GetMapping("/role-edit")
     public String roleEdit(@RequestParam("id")UUID id, Model model){
         RoleResponse response = roleService.findById(id);
@@ -50,20 +54,17 @@ public class RoleController {
         return "role/role-edit";
     }
 
-    @Permission("sys:role:list")
+    @Permission(ROLE_LIST)
     @ResponseBody
     @GetMapping("/list")
     public R list(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("roleName") String roleName) {
         return roleService.list(new Page(page, size), roleName);
     }
 
-    @Permission("sys:role:add")
+    @Permission(ROLE_ADD)
     @ResponseBody
     @PostMapping("/add")
-    public R add(@Valid RoleRequest role, BindingResult result){
-        if(result.hasErrors()){
-            return R.other(result.getFieldError().getDefaultMessage());
-        }
+    public R add(@Valid RoleRequest role){
         if(role.getId() != null) {
             return R.other("非法请求");
         }
@@ -78,13 +79,10 @@ public class RoleController {
         return roleService.save(role, menus);
     }
 
-    @Permission("sys:role:edit")
+    @Permission(ROLE_EDIT)
     @ResponseBody
     @PostMapping("/edit")
-    public R edit(@Valid RoleRequest role, BindingResult result){
-        if(result.hasErrors()){
-            return R.other(result.getFieldError().getDefaultMessage());
-        }
+    public R edit(@Valid RoleRequest role){
         if(role.getId() == null) {
             return R.other("非法请求");
         }
@@ -99,7 +97,7 @@ public class RoleController {
         return roleService.save(role, menus);
     }
 
-    @Permission("sys:role:remove")
+    @Permission(ROLE_REMOVE)
     @ResponseBody
     @DeleteMapping("/{ids}")
     public R remove(@PathVariable("ids") String ids){
@@ -121,7 +119,7 @@ public class RoleController {
         }
     }
 
-    @Permission({"sys:role:edit", "sys:role:add"})
+    @Permission({ROLE_EDIT, ROLE_ADD})
     @GetMapping("/menus")
     @ResponseBody
     public R menus(@RequestParam(value = "roleId", required = false) UUID roleId){

@@ -8,5 +8,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 public @interface Permission {
+
+    /**
+     * 所需权限, 满足任一即可访问
+     */
     String[] value();
 }

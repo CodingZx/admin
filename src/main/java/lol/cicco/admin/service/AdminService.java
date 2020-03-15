@@ -1,5 +1,6 @@
 package lol.cicco.admin.service;
 
+import com.fasterxml.uuid.Generators;
 import com.google.common.base.Strings;
 import lol.cicco.admin.common.model.Page;
 import lol.cicco.admin.common.model.R;
@@ -68,7 +69,7 @@ public class AdminService {
         entity.setRoleId(admin.getRoleId());
 
         if(entity.getId() == null) {
-            entity.setId(UUID.randomUUID());
+            entity.setId(Generators.timeBasedGenerator().generate());
             adminMapper.add(entity);
         } else {
             adminMapper.update(entity);

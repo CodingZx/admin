@@ -13,7 +13,6 @@ import lol.cicco.admin.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,25 +22,31 @@ import java.util.UUID;
 @RequestMapping("/admin")
 @Controller
 public class AdminController {
+    public static final String ADMIN_LIST = "sys:admin:list";
+    public static final String ADMIN_ADD = "sys:admin:add";
+    public static final String ADMIN_EDIT = "sys:admin:edit";
+    public static final String ADMIN_REMOVE = "sys:admin:remove";
+    public static final String ADMIN_STATUS = "sys:admin:status";
+
     @Autowired
     private RoleService roleService;
     @Autowired
     private AdminService adminService;
 
-    @Permission("sys:admin:list")
+    @Permission(ADMIN_LIST)
     @GetMapping("/admin-list")
     public String adminList(){
         return "admin/admin-list";
     }
 
-    @Permission("sys:admin:add")
+    @Permission(ADMIN_ADD)
     @GetMapping("/admin-add")
     public String adminAdd(Model model){
         model.addAttribute("roleList", roleService.all());
         return "admin/admin-add";
     }
 
-    @Permission("sys:admin:edit")
+    @Permission(ADMIN_EDIT)
     @GetMapping("/admin-edit")
     public String adminEdit(@RequestParam("id")UUID id, Model model){
         AdminResponse response = adminService.findById(id);
@@ -53,20 +58,17 @@ public class AdminController {
         return "admin/admin-edit";
     }
 
-    @Permission("sys:admin:list")
+    @Permission(ADMIN_LIST)
     @ResponseBody
     @GetMapping("/list")
     public R list(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam("userName")String userName){
         return adminService.list(new Page(page, size), userName);
     }
 
-    @Permission("sys:admin:add")
+    @Permission(ADMIN_ADD)
     @ResponseBody
     @PostMapping("/add")
-    public R add(@Valid AdminRequest admin, BindingResult result){
-        if(result.hasErrors()){
-            return R.other(result.getFieldError().getDefaultMessage());
-        }
+    public R add(@Valid AdminRequest admin){
         if(admin.getId() != null){
             return R.other("非法请求");
         }
@@ -79,13 +81,10 @@ public class AdminController {
         return adminService.save(admin);
     }
 
-    @Permission("sys:admin:edit")
+    @Permission(ADMIN_EDIT)
     @ResponseBody
     @PostMapping("/update")
-    public R update(@Valid AdminRequest admin, BindingResult result){
-        if(result.hasErrors()){
-            return R.other(result.getFieldError().getDefaultMessage());
-        }
+    public R update(@Valid AdminRequest admin){
         if(admin.getId() == null){
             return R.other("非法请求");
         }
@@ -100,7 +99,7 @@ public class AdminController {
         return adminService.save(admin);
     }
 
-    @Permission("sys:admin:status")
+    @Permission(ADMIN_STATUS)
     @ResponseBody
     @PostMapping("/disable/{id}")
     public R disable(@PathVariable("id")UUID id){
@@ -112,7 +111,7 @@ public class AdminController {
 
     @Permission("sys:admin:status")
     @ResponseBody
-    @PostMapping("/active/{id}")
+    @PostMapping(ADMIN_STATUS)
     public R active(@PathVariable("id")UUID id){
         if(id.equals(Constants.DEFAULT_ID)){
             return R.other("无法对最高管理员进行操作!");
@@ -120,11 +119,11 @@ public class AdminController {
         return adminService.updateStatus(id, true);
     }
 
-    @Permission("sys:admin:remove")
+    @Permission(ADMIN_REMOVE)
     @ResponseBody
     @DeleteMapping("/{ids}")
     public R remove(@PathVariable("ids") String ids){
-        List<UUID> uuids = Lists.newLinkedList();
+        List<UUID> uuidList = Lists.newLinkedList();
         for(String id : ids.split(",")){
             try{
                 UUID fromId = UUID.fromString(id);
@@ -132,11 +131,11 @@ public class AdminController {
                 if(fromId.equals(Constants.DEFAULT_ID)){
                     return R.other("无法删除最高管理员!");
                 }
-                uuids.add(fromId);
+                uuidList.add(fromId);
             } catch (Exception ignored){}
         }
 
-        return adminService.remove(uuids);
+        return adminService.remove(uuidList);
     }
 
 }

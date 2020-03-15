@@ -1,5 +1,6 @@
 package lol.cicco.admin.service;
 
+import com.fasterxml.uuid.Generators;
 import com.google.common.collect.Lists;
 import lol.cicco.admin.common.model.R;
 import lol.cicco.admin.dto.request.MenuRequest;
@@ -48,7 +49,7 @@ public class MenuService {
         menuEntity.setPermission(menu.getPermission());
         menuEntity.setSortBy(menu.getSortBy());
         if(menuEntity.getId() == null){
-            menuEntity.setId(UUID.randomUUID());
+            menuEntity.setId(Generators.timeBasedGenerator().generate());
             menuMapper.add(menuEntity);
         } else {
             menuMapper.update(menuEntity);

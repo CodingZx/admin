@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.5.RELEASE</version>
+        <version>2.2.5.RELEASE</version>
     </parent>
 
     <properties>
@@ -22,7 +22,8 @@
         <guava.version>27.0.1-jre</guava.version>
         <mybatis.version>2.0.1</mybatis.version>
         <fileupload.version>1.4</fileupload.version>
-        <commons.io.version>2.6</commons.io.version>
+        <commons.io.version>2.2</commons.io.version>
+        <uuid.version>4.0</uuid.version>
     </properties>
 
     <dependencies>
@@ -31,6 +32,14 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- UUID -->
+        <dependency>
+            <groupId>com.fasterxml.uuid</groupId>
+            <artifactId>java-uuid-generator</artifactId>
+            <version>${uuid.version}</version>
+        </dependency>
+
         <!-- JSON -->
         <dependency>
             <groupId>com.google.code.gson</groupId>

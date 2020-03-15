@@ -4,15 +4,12 @@ import lol.cicco.admin.common.Constants;
 import lol.cicco.admin.common.annotation.NoLogin;
 import lol.cicco.admin.common.model.R;
 import lol.cicco.admin.common.model.Token;
-import lol.cicco.admin.common.util.GsonUtils;
 import lol.cicco.admin.dto.request.LoginRequest;
 import lol.cicco.admin.service.LoginService;
-import lol.cicco.admin.service.MenuService;
 import lol.cicco.admin.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,10 +34,7 @@ public class MainController {
     @NoLogin
     @ResponseBody
     @PostMapping("/login")
-    public R login(@Valid LoginRequest login, BindingResult result){
-        if(result.hasErrors()){
-            return R.other(result.getFieldError().getDefaultMessage());
-        }
+    public R login(@Valid LoginRequest login){
         return loginService.login(login);
     }
 
@@ -59,7 +53,7 @@ public class MainController {
     }
 
     @GetMapping("/404")
-    public String notfound(){
+    public String notFound(){
         return "404";
     }
 

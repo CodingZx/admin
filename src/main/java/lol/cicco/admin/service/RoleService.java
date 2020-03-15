@@ -1,5 +1,6 @@
 package lol.cicco.admin.service;
 
+import com.fasterxml.uuid.Generators;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -70,7 +71,7 @@ public class RoleService {
         roleEntity.setMenus(menuObj);
 
         if (roleEntity.getId() == null) {
-            roleEntity.setId(UUID.randomUUID());
+            roleEntity.setId(Generators.timeBasedGenerator().generate());
             roleMapper.addRole(roleEntity);
         } else {
             roleMapper.updateRole(roleEntity);
