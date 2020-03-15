@@ -33,9 +33,9 @@
 <body>
 <div class="x-nav">
           <span class="layui-breadcrumb">
-            <a href="#">后台管理</a>
+            <a href="#">系统管理</a>
             <a>
-              <cite>账号列表</cite></a>
+              <cite>后台账号</cite></a>
           </span>
 </div>
 <div>
@@ -43,9 +43,9 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-body">
-                    <form class="layui-form layui-col-space5">
+                    <div class="layui-form layui-col-space5">
                         <div class="layui-inline layui-show-xs-block">
-                            <input type="text" id="userName"  placeholder="请输入账号" autocomplete="off" class="layui-input">
+                            <input type="text" id="userName" placeholder="请输入账号" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-show-xs-block">
                             <button class="layui-btn" type="button" id="search">搜索</button>
@@ -53,7 +53,7 @@
                         <div class="layui-inline layui-show-xs-block">
                             <button class="layui-btn layui-btn-warm" type="button" id="clear">清空</button>
                         </div>
-                    </form>
+                    </div>
                 </div>
                 <div class="layui-card-header">
                     <button class="layui-btn" cicco:permission="sys:admin:add" id="addBtn"><i class="layui-icon">&#xe654;</i>添加</button>
@@ -69,18 +69,18 @@
 </body>
 <script type="text/html" id="operate">
     {{#  if(s_edit_h+'' == 'true'){ }}
-        <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon">&#xe642;</i>编辑</a>
     {{#  } }}
-    {{#  if(s_edit_h+'' == 'true'){ }}
-        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
+    {{#  if(s_remove_h+'' == 'true'){ }}
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
     {{#  } }}
 
     {{#  if(s_status_h+'' == 'true'){ }}
-        {{#  if(d.status+'' == 'true'){ }}
-            <span class="layui-btn layui-btn-warm layui-btn-mini" lay-event="disable"><i class="layui-icon">&#x1006;</i>禁用</span>
-        {{#  } else { }}
-            <span class="layui-btn layui-btn-normal layui-btn-mini" lay-event="active"><i class="layui-icon">&#xe605;</i>启用</span>
-        {{#  } }}
+    {{#  if(d.status+'' == 'true'){ }}
+    <span class="layui-btn layui-btn-warm layui-btn-mini" lay-event="disable"><i class="layui-icon">&#x1006;</i>禁用</span>
+    {{#  } else { }}
+    <span class="layui-btn layui-btn-normal layui-btn-mini" lay-event="active"><i class="layui-icon">&#xe605;</i>启用</span>
+    {{#  } }}
     {{#  } }}
 </script>
 <script>
@@ -116,10 +116,7 @@
                         layer.msg(res.message, {time: 5000});
                     }
                 });
-
             });
-
-
         });
 
         $(document).on('click','#search',function(){
@@ -132,6 +129,7 @@
 
         $(document).on('click','#clear',function(){
              $("#userName").val('');
+
              var newSearchVal = $("#userName").val();
              if(newSearchVal != searchUserName) {
                 searchUserName = newSearchVal;
@@ -150,8 +148,8 @@
               ,groups: 5 //只显示 1 个连续页码
               ,first: false //不显示首页
               ,last: false //不显示尾页
-              ,limit: 20
-              ,limits: [10, 20, 30, 50]
+              ,limit: 2
+              ,limits: [2, 20, 30, 50]
             }
             ,loading: true
             ,request: {
@@ -167,13 +165,13 @@
             }
             ,cols: [
                     [
-                      {type:'checkbox',width:'10%'}
+                      {type:'checkbox',width:'5%'}
                       ,{field:'id', title: 'ID' ,align:'center', hide:'true'}
                       ,{field:'userName', title: '账号' ,align:'center'}
-                      ,{field:'realName', title: '真实姓名',align:'center'}
+                      ,{field:'realName', title: '真实姓名',align:'center',width:'10%'}
                       ,{field:'roleName', title: '角色',align:'center'}
                       ,{field:'createTime', title: '创建时间',align:'center'}
-                      ,{field:'status',align:'center', title: '状态',templet: function(d){
+                      ,{field:'status',align:'center', title: '状态',width:'8%',templet: function(d){
                         if(d.status+'' == 'true'){
                             return '<span class="layui-btn layui-btn-normal layui-btn-mini">已启用</span>';
                         }else {

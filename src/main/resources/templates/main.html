@@ -57,7 +57,8 @@
                             <li th:each="sub:${val.children}">
                                 <a th:onclick="xadmin.add_tab([[${sub.label}]],[[${sub.url}]])">
                                     <i class="iconfont">&#xe6a7;</i>
-                                    <cite th:text="${sub.label}">后台账号</cite></a>
+                                    <cite th:text="${sub.label}"></cite>
+                                </a>
                             </li>
                         </ul>
                     </li>
