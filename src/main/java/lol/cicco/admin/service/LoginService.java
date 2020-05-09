@@ -8,12 +8,14 @@ import lol.cicco.admin.dto.response.LoginResponse;
 import lol.cicco.admin.entity.AdminEntity;
 import lol.cicco.admin.mapper.AdminMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.weekend.WeekendSqls;
 
 @Service
+@Scope
 @Transactional(rollbackFor = Exception.class)
 public class LoginService {
     @Autowired

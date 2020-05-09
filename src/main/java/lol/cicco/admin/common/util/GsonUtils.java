@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 public class GsonUtils {
 
     private static final GsonBuilder builder;
-    private static final JsonParser parser;
 
     static {
         builder = new GsonBuilder().disableHtmlEscaping().setDateFormat(DateUtils.DEFAULT_DATE_TIME_FORMATTER)
@@ -42,17 +41,10 @@ public class GsonUtils {
                     }
 
                 });
-
-        ////////////////////////
-        parser = new JsonParser();
     }
 
     public static Gson gson() {
         return builder.create();
     }
 
-    public static JsonParser parser() {
-        return parser;
-    }
-    
 }

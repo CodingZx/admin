@@ -1,6 +1,7 @@
 package lol.cicco.admin.common.handler;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import lol.cicco.admin.common.util.GsonUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
@@ -24,17 +25,17 @@ public class JsonArrayHandler extends BaseTypeHandler<JsonArray> {
 
     @Override
     public JsonArray getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        return GsonUtils.parser().parse(rs.getString(columnName)).getAsJsonArray();
+        return JsonParser.parseString(rs.getString(columnName)).getAsJsonArray();
     }
 
     @Override
     public JsonArray getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        return GsonUtils.parser().parse(rs.getString(columnIndex)).getAsJsonArray();
+        return JsonParser.parseString(rs.getString(columnIndex)).getAsJsonArray();
     }
 
     @Override
     public JsonArray getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        return GsonUtils.parser().parse(cs.getString(columnIndex)).getAsJsonArray();
+        return JsonParser.parseString(cs.getString(columnIndex)).getAsJsonArray();
     }
 
 }

@@ -1,6 +1,7 @@
 package lol.cicco.admin.common.handler;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lol.cicco.admin.common.util.GsonUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
@@ -24,17 +25,17 @@ public class JsonObjectHandler extends BaseTypeHandler<JsonObject> {
 
     @Override
     public JsonObject getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        return GsonUtils.parser().parse(rs.getString(columnName)).getAsJsonObject();
+        return JsonParser.parseString(rs.getString(columnName)).getAsJsonObject();
     }
 
     @Override
     public JsonObject getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        return GsonUtils.parser().parse(rs.getString(columnIndex)).getAsJsonObject();
+        return JsonParser.parseString(rs.getString(columnIndex)).getAsJsonObject();
     }
 
     @Override
     public JsonObject getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        return GsonUtils.parser().parse(cs.getString(columnIndex)).getAsJsonObject();
+        return JsonParser.parseString(cs.getString(columnIndex)).getAsJsonObject();
     }
 
 }
