@@ -11,13 +11,13 @@ import java.util.UUID;
 
 public class Token {
     @Getter
-    private UUID adminId;
+    private final UUID adminId;
     @Getter
-    private String realName;
+    private final String realName;
     @Getter
-    private UUID roleId;
+    private final UUID roleId;
     @Getter
-    private LocalDateTime createTime;
+    private final LocalDateTime createTime;
 
     private Token(UUID adminId, String realName, UUID roleId){
         this.adminId = adminId;

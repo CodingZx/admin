@@ -3,6 +3,7 @@ package lol.cicco.admin.common.interceptor;
 import lol.cicco.admin.common.Constants;
 import lol.cicco.admin.common.annotation.Permission;
 import lol.cicco.admin.common.model.Token;
+import lol.cicco.admin.common.util.CurrentAdminUtils;
 import lol.cicco.admin.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class PermissionInterceptor extends BaseInterceptor {
                 return true;
             }
 
-            Token token = (Token) request.getAttribute(Constants.ADMIN_USER_TOKEN);
+            Token token = CurrentAdminUtils.getToken();
 
             List<String> permissions = roleService.getPermissions(token);
             var option = Stream.of(permission.value()).filter(permissions::contains).findAny();

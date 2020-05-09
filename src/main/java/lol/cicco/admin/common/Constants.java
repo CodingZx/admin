@@ -5,8 +5,6 @@ import java.util.UUID;
 public class Constants {
     public static final UUID DEFAULT_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
-    public static final String ADMIN_USER_TOKEN = "ADMIN_USER_TOKEN";
-
     public static final String CICCO_PERMISSION_LIST = "CICCO_PERMISSION_LIST";
 
     /**
