@@ -2,10 +2,12 @@ package lol.cicco.admin.controller;
 
 import com.google.common.collect.Lists;
 import lol.cicco.admin.common.Constants;
+import lol.cicco.admin.common.annotation.NoLogin;
 import lol.cicco.admin.common.annotation.Permission;
 import lol.cicco.admin.common.exception.AlreadyUseException;
 import lol.cicco.admin.common.model.Page;
 import lol.cicco.admin.common.model.R;
+import lol.cicco.admin.common.util.GsonUtils;
 import lol.cicco.admin.dto.request.ConfigRequest;
 import lol.cicco.admin.dto.response.ConfigResponse;
 import lol.cicco.admin.service.ConfigService;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/config")
@@ -28,6 +31,14 @@ public class ConfigController {
 
     @Autowired
     private ConfigService configService;
+
+    @NoLogin
+    @GetMapping
+    @ResponseBody
+    public String config() {
+        var map = configService.all().stream().collect(Collectors.toMap(ConfigResponse::getPropertyKey, ConfigResponse::getPropertyValue));
+        return GsonUtils.gson().toJson(map);
+    }
 
     @Permission(CONFIG_LIST)
     @GetMapping("/config-list")
