@@ -109,9 +109,9 @@ public class AdminController {
         return adminService.updateStatus(id, false);
     }
 
-    @Permission("sys:admin:status")
+    @Permission(ADMIN_STATUS)
     @ResponseBody
-    @PostMapping(ADMIN_STATUS)
+    @PostMapping("/active/{id}")
     public R active(@PathVariable("id")UUID id){
         if(id.equals(Constants.DEFAULT_ID)){
             return R.other("无法对最高管理员进行操作!");

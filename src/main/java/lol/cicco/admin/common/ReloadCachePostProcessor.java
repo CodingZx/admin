@@ -19,6 +19,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Configuration
+@ConditionalOnProperty(value = "reload.property.enable",havingValue = "true")
 public class ReloadCachePostProcessor implements BeanPostProcessor, ApplicationContextAware, InitializingBean, EnvironmentPostProcessor{
     @Autowired
     private ConfigService configService;
