@@ -21,7 +21,7 @@
         <lombok.version>1.18.12</lombok.version>
         <guava.version>29.0-jre</guava.version>
         <fileupload.version>1.4</fileupload.version>
-        <commons.io.version>2.2</commons.io.version>
+        <commons.io.version>2.7</commons.io.version>
         <uuid.version>4.0</uuid.version>
         <tk.mybatis.version>2.1.5</tk.mybatis.version>
         <page.hepler.version>1.2.13</page.hepler.version>
